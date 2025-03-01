@@ -5,7 +5,12 @@
 
 typedef int Array2D[MAX][MAX];
 
-// This function sets the value of each array element to 0.
+/*
+	Purpose: This function sets the value of each 2d array element to 0
+	Returns: void
+	@param : arr is the 2d array to be initialized
+	Pre-condition: 
+*/
 void
 initializeArray(Array2D arr)
 {
@@ -16,9 +21,15 @@ initializeArray(Array2D arr)
             arr[i][j] = 0; 
 }
 
-// This function prints the contents of a 2D array in a 4x4 board.
-// The first row and column should print numbers 1-4 as the column
-// and row coordinates respectively.
+/*
+	Purpose: This function prints the contents of a 2D array in a 4x4 board.
+             The first row and column should print numbers 1-4 as the column
+             and row coordinates, respectively.
+	Returns: void
+	@param : arr is the 2d array to be printted
+	Pre-condition: arr is initialized
+*/
+
 void 
 printBoard(Array2D arr)
 {
@@ -34,14 +45,26 @@ printBoard(Array2D arr)
     printf(" +---+---+---+---+\n");
 }
 
-// This function checks the validity of an integer input. If the input
-// is between 1 and 4 inclusive, return 1, else return 0;
+
+/*
+	Purpose: This function checks the validity of an integer input.
+	Returns: 1 if the input is between 1 and 4 inclusive,
+             otherwise it returns 0
+	@param : input is the integer to be evaluated
+	Pre-condition: 
+*/
 int
 isValidInput(int input);
 
-// This function asks the user for coordinates x and y. If the input
-// is invalid, an error message will be displayed until the user
-// enters a valid input.
+/*
+	Purpose: This function asks the user for coordinates x and y. If the input
+             is invalid, an error message will be displayed until the user
+             enters a valid input.
+	Returns: void
+	@param *x: stores the x coordinate
+    @param *y: stores the y coordinate
+	Pre-condition: 
+*/
 void
 getCoordinates(int *x, int *y);
 
