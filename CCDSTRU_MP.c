@@ -23,13 +23,12 @@ initializeArray(Array2D arr)
 
 /*
 	Purpose: This function prints the contents of a 2D array in a 4x4 board.
-             The first row and column should print numbers 1-4 as the column
-             and row coordinates, respectively.
+		 The first row and column should print numbers 1-4 as the column
+             	 and row coordinates, respectively.
 	Returns: void
-	@param : arr is the 2d array to be printted
+	@param : arr is the 2d array to be printed
 	Pre-condition: arr is initialized
 */
-
 void 
 printBoard(Array2D arr)
 {
@@ -49,7 +48,7 @@ printBoard(Array2D arr)
 /*
 	Purpose: This function checks the validity of an integer input.
 	Returns: 1 if the input is between 1 and 4 inclusive,
-             otherwise it returns 0
+             	 otherwise it returns 0
 	@param : input is the integer to be evaluated
 	Pre-condition: 
 */
@@ -58,11 +57,11 @@ isValidInput(int input);
 
 /*
 	Purpose: This function asks the user for coordinates x and y. If the input
-             is invalid, an error message will be displayed until the user
-             enters a valid input.
+             	 is invalid, an error message will be displayed until the user
+            	 enters a valid input.
 	Returns: void
 	@param *x: stores the x coordinate
-    @param *y: stores the y coordinate
+    	@param *y: stores the y coordinate
 	Pre-condition: 
 */
 void
