@@ -95,7 +95,7 @@ getCoordinates(int *x, int *y)
 int Search(int key, int *arr, int size)
 {
     int i, found;
-    found = 0;
+    found = -1;
 
     for (i = 0; i < size; i++)
         if (arr[i] == key)
@@ -109,18 +109,18 @@ int
 checkCombo(Array2D arr) // improve
 {
     int W[3][4] = {{11, 12, 13, 14}, {14, 23, 32, 41}, {41, 42, 43, 44}}; // Winning combinations
-    int temp[16];
-    int ctr, i, j, k = 0;
+    int temp[16] = {0};
+    int ctr = 0, i, j, k = 0;
 
     for (i = 0; i < MAX; i++)
         for (j = 0; j < MAX; j++)
-            if (arr[i][j])
+            if (arr[i][j] == 1)
             {
-                temp[k] = i * 10 + j; // Converts (x, y) to a 2-digit integer
+                temp[k] = (i + 1) * 10 + (j + 1); // Converts (x, y) to a 2-digit integer
                 k++;
             }
 
-    for (i = 0; i < 3 && ctr != 4; i++)
+    for (i = 0; i < 3 && ctr < 4; i++) 
     {
         ctr = 0;
         for (j = 0; j < MAX; j++)
@@ -130,54 +130,90 @@ checkCombo(Array2D arr) // improve
 
     if (ctr == 4)
         return 1;
-    else
-        return 0;
+    else return 0;
+}
+
+void
+playerName(int num)
+{
+    switch (num)
+    {
+        case 0: printf("\n      Player Tres"); break;
+        case 1: printf("\n       Player Uno"); break;
+        case 2: printf("\n       Player Dos"); break;
+    }
+}
+
+void
+startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
+{
+	int go = FALSE, turn = TRUE, over = FALSE;
+    int i, j, totalF = 16, player = 0;
+    int x, y;
+
+    printf("Hi");
+    printf("\n%d", over);
+
+	while (!over) {
+        playerName(player % 3);
+		printBoard(F);
+        getCoordinates(&x, &y);
+		if (turn)
+			if (go && F[x - 1][y - 1])
+			{
+				Uno[x - 1][y - 1] = 1;
+            	F[x - 1][y - 1] = 0;
+				turn = !turn;
+				go = !go;
+                totalF--;
+			}
+			else if (!go && F[x - 1][y - 1])
+			{
+				Tres[x - 1][y - 1] = 1;
+            	F[x - 1][y - 1] = 0;
+				go = !go;
+                totalF--;
+			}
+		else if (!turn && !F[x - 1][y - 1])
+		{
+			Uno[x - 1][y - 1] = 0;
+			Tres[x - 1][y - 1] = 0;
+            F[x - 1][y - 1] = 1;
+			turn = !turn;
+            totalF++;
+		}
+        over = checkCombo(Uno) || checkCombo(Tres) || totalF == 0;
+        player++;
+	}
+
+    if (over && totalF == 0)
+    {
+        printf("\n-------Dos Wins-------\n");
+        printBoard(F);
+    }
+    else if (over && checkCombo(Uno))
+    {
+        printf("\n-------Uno Wins-------\n");
+        printf("\n      Uno's Board");
+        printBoard(Uno);
+    }
+    else if (over && checkCombo(Tres))
+    {
+        printf("\n-------Tres Wins-------\n");
+        printf("\n      Tres' Board");
+        printBoard(Tres);
+    }
 }
 
 int main()
 {
     Array2D Uno, Dos, Tres, F;
-    int go = FALSE, turn = TRUE, over = FALSE;
-    int i, j, totalF = 0;
-    int x, y;
 
     initializeArray(Uno, 0);
     initializeArray(Dos, 0);
     initializeArray(Tres, 0);
     initializeArray(F, 1);
-
-    for (i = 0; i < MAX*MAX + 1; i++)
-    {
-        printBoard(F);
-        getCoordinates(&x, &y);
-
-        if (F[x][y])
-        {
-            Uno[x - 1][y - 1] = 1;
-            F[x - 1][y - 1] = 0;
-        }
-    }
-
-    over = TRUE;
-
-    for (i = 0; i < MAX; i++)
-        for (j = 0; j < MAX; j++)
-            totalF += F[i][j];
-
-    if (over && totalF == 0){
-        printf("\nDos Wins\n");
-        break;
-    }
-    else if (over && checkCombo(Uno)){
-        printf("\nUno Wins\n");
-        break;
-    }
-    else if (over && checkCombo(Tres)){
-        printf("\nTres Wins\n");
-        break;
-    }
-
-    printBoard(F);
+    startGame(Uno, Dos, Tres, F);
 
     return 0;
 }
