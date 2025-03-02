@@ -1,18 +1,23 @@
 #include <stdio.h>
+#include <stdlib.h>
 #define MAX 4
 #define TRUE 1
 #define FALSE 0
 
 typedef int Array2D[MAX][MAX];
 
+void clrscr()
+{
+    system("@cls||clear");
+}
+
 /*
-	Purpose: This function sets the value of each 2d array element to a number.
-	Returns: void
-	@param : arr is the 2d array to be initialized
-	Pre-condition: 
+    Purpose: This function sets the value of each 2d array element to a number.
+    Returns: void
+    @param : arr is the 2d array to be initialized
+    Pre-condition:
 */
-void 
-initializeArray(Array2D arr, int num)
+void initializeArray(Array2D arr, int num)
 {
     int i, j;
 
@@ -22,15 +27,14 @@ initializeArray(Array2D arr, int num)
 }
 
 /*
-	Purpose: This function prints the contents of a 2D array in a 4x4 board.
-		 The first row and column should print numbers 1-4 as the column
-             	 and row coordinates, respectively.
-	Returns: void
-	@param : arr is the 2d array to be printed
-	Pre-condition: arr is initialized
+    Purpose: This function prints the contents of a 2D array in a 4x4 board.
+         The first row and column should print numbers 1-4 as the column
+                 and row coordinates, respectively.
+    Returns: void
+    @param : arr is the 2d array to be printed
+    Pre-condition: arr is initialized
 */
-void 
-printBoard(Array2D arr)
+void printBoard(Array2D arr)
 {
     int i, j;
 
@@ -49,14 +53,13 @@ printBoard(Array2D arr)
 }
 
 /*
-	Purpose: This function checks the validity of an integer input.
-	Returns: 1 if the input is between 1 and 4 inclusive,
-             	 otherwise it returns 0
-	@param : input is the integer to be evaluated
-	Pre-condition: 
+    Purpose: This function checks the validity of an integer input.
+    Returns: 1 if the input is between 1 and 4 inclusive,
+                 otherwise it returns 0
+    @param : input is the integer to be evaluated
+    Pre-condition:
 */
-int 
-isValidInput(int input)
+int isValidInput(int input)
 {
     if (input >= 1 && input <= 4)
         return 1;
@@ -65,36 +68,43 @@ isValidInput(int input)
 }
 
 /*
-	Purpose: This function asks the user for coordinates x and y. If the input
-             	 is invalid, an error message will be displayed until the user
-            	 enters a valid input.
-	Returns: void
-	@param *x: stores the x coordinate
-    	@param *y: stores the y coordinate
-	Pre-condition: 
+    Purpose: This function asks the user for coordinates x and y. If the input
+                 is invalid, an error message will be displayed until the user
+                 enters a valid input.
+    Returns: void
+    @param *x: stores the x coordinate
+        @param *y: stores the y coordinate
+    Pre-condition:
 */
-void 
-getCoordinates(int *x, int *y)
+void getCoordinates(int *x, int *y, Array2D F, int player)
 {
-    printf("\nEnter row: ");
-    scanf("%d", x);
-    while (!isValidInput(*x))
+    *x = 0;
+    *y = 0;
+    do
     {
-        printf("Invalid input. Enter row: ");
-        scanf("%d", x);
-    }
+        if (isValidInput(*x) && isValidInput(*y))
+            if ((player % 3 == 2 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 1) && !F[*x - 1][*y - 1]))
+                printf("\nThis space cannot be selected. Please enter a different coordinate.");
 
-    printf("Enter column: ");
-    scanf("%d", y);
-    while (!isValidInput(*y))
-    {
-        printf("Invalid input. Enter column: ");
+        printf("\nEnter row: ");
+        scanf("%d", x);
+        while (!isValidInput(*x))
+        {
+            printf("Invalid input. Enter row: ");
+            scanf("%d", x);
+        }
+
+        printf("Enter column: ");
         scanf("%d", y);
-    }
+        while (!isValidInput(*y))
+        {
+            printf("Invalid input. Enter column: ");
+            scanf("%d", y);
+        }
+    } while ((player % 3 == 2 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 1) && !F[*x - 1][*y - 1]));
 }
 
-int 
-Search(int key, int *arr, int size)
+int Search(int key, int *arr, int size)
 {
     int i, found;
     found = -1;
@@ -106,8 +116,7 @@ Search(int key, int *arr, int size)
     return found;
 }
 
-int
-checkCombo(Array2D arr) // improve
+int checkCombo(Array2D arr) // improve
 {
     int W[3][4] = {{11, 12, 13, 14}, {14, 23, 32, 41}, {41, 42, 43, 44}}; // Winning combinations
     int temp[16] = {0};
@@ -121,7 +130,7 @@ checkCombo(Array2D arr) // improve
                 k++;
             }
 
-    for (i = 0; i < 3 && ctr < 4; i++) 
+    for (i = 0; i < 3 && ctr < 4; i++)
     {
         ctr = 0;
         for (j = 0; j < MAX; j++)
@@ -134,64 +143,63 @@ checkCombo(Array2D arr) // improve
     else return 0;
 }
 
-void
-playerName(int num)
+void playerName(int num)
 {
     switch (num)
     {
-        case 0: printf("\n      Player Tres"); break;
-        case 1: printf("\n       Player Uno"); break;
-        case 2: printf("\n       Player Dos"); break;
+    case 0:
+        printf("      Player Tres");
+        break;
+    case 1:
+        printf("       Player Uno");
+        break;
+    case 2:
+        printf("       Player Dos");
+        break;
     }
 }
 
-void
-startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
+void startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 {
-	int go = FALSE, turn = TRUE, over = FALSE;
-    int i, j, totalF = 16, player = 0;
+    int turn = TRUE, go = FALSE, over = FALSE;
+    int totalF = 16, player = 0;
     int x, y;
 
-	while (!over) {
+    while (!over)
+    {
         playerName(player % 3);
-		printBoard(F);
-        getCoordinates(&x, &y);
-		if (turn)
-			if (go)
-			{
-                if (F[x - 1][y - 1])
-                {
-                    Uno[x - 1][y - 1] = 1;
-                    F[x - 1][y - 1] = 0;
-                    totalF--;
-                }
-				turn = !turn;
-				go = !go;
-			}
-			else
-			{
-				if (F[x - 1][y - 1])
-                {
-                    Tres[x - 1][y - 1] = 1;
-            	    F[x - 1][y - 1] = 0;
-                    totalF--;
-                }
-				go = !go;
-			}
-		else
-		{
-            if (!F[x - 1][y - 1])
+        printBoard(F);
+        getCoordinates(&x, &y, F, player);
+        if (turn)
+        {
+            if (go && F[x - 1][y - 1])
             {
-                Uno[x - 1][y - 1] = 0;
-                Tres[x - 1][y - 1] = 0;
-                F[x - 1][y - 1] = 1;
-                totalF++;
+                Uno[x - 1][y - 1] = 1;
+                F[x - 1][y - 1] = 0;
+                totalF--;
+                turn = !turn;
+                go = !go;
             }
-			turn = !turn;
-		}
+            else if (!go && F[x - 1][y - 1])
+            {
+                Tres[x - 1][y - 1] = 1;
+                F[x - 1][y - 1] = 0;
+                totalF--;
+                go = !go;
+            }
+        }
+        else if (!turn && !F[x - 1][y - 1])
+        {
+            Uno[x - 1][y - 1] = 0;
+            Tres[x - 1][y - 1] = 0;
+            F[x - 1][y - 1] = 1;
+            totalF++;
+            turn = !turn;
+        }
         over = checkCombo(Uno) || checkCombo(Tres) || totalF == 0;
         player++;
-	}
+        clrscr();
+    }
 
     if (over && totalF == 0)
     {
@@ -220,7 +228,8 @@ int main()
     initializeArray(Dos, 0);
     initializeArray(Tres, 0);
     initializeArray(F, 1);
-	startGame(Uno, Dos, Tres, F);
+    clrscr();
+    startGame(Uno, Dos, Tres, F);
 
     return 0;
 }
