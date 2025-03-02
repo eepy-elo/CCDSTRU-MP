@@ -104,6 +104,7 @@ void getCoordinates(int *x, int *y, Array2D F, int player)
     } while ((player % 3 == 2 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 1) && !F[*x - 1][*y - 1]));
 }
 
+// This function searches for a key in an array. It returns index if found and -1 if not.
 int Search(int key, int *arr, int size)
 {
     int i, found;
@@ -116,9 +117,16 @@ int Search(int key, int *arr, int size)
     return found;
 }
 
+// This function takes a 2D array and checks if it contains the winning combinations in W. 
+// If an index in the 2D array contains 1, it stores the row and column indices in array temp
+// as a 2-digit integer. 
+//     Example: arr[1][2] => 12
+// Once all the elements of a row in W is found in the 2D array, the function returns 1.  
 int checkCombo(Array2D arr) // improve
 {
-    int W[3][4] = {{11, 12, 13, 14}, {14, 23, 32, 41}, {41, 42, 43, 44}}; // Winning combinations
+    int W[3][4] = {{11, 12, 13, 14}, 
+                   {14, 23, 32, 41}, 
+                   {41, 42, 43, 44}}; // Winning combinations
     int temp[16] = {0};
     int ctr = 0, i, j, k = 0;
 
@@ -143,6 +151,7 @@ int checkCombo(Array2D arr) // improve
     else return 0;
 }
 
+// This function accepts a number and prints its corresponding player name.
 void playerName(int num)
 {
     switch (num)
@@ -159,6 +168,13 @@ void playerName(int num)
     }
 }
 
+// This function starts the game and loops it until a winning combination is found, 
+// or if all elements in the 2D matrix F are 0. The order of turns starts with player 
+// Tres, followed by Uno, then Dos. At each of their turns, players Uno and Tres can 
+// occupy a position in board F by entering its row and column index. On the contrary
+// player Dos inputs an occupied position by either Uno or Tres and makes it unoccupied.
+// An unoccupied position is marked as 1 while an occupied one is 0. Once the game is over,
+// the function will print the winning player's name and board.
 void startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 {
     int turn = TRUE, go = FALSE, over = FALSE;
