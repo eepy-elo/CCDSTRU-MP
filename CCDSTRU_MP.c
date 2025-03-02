@@ -164,12 +164,18 @@ int main()
         for (j = 0; j < MAX; j++)
             totalF += F[i][j];
 
-    if (over && totalF == 0)
+    if (over && totalF == 0){
         printf("\nDos Wins\n");
-    else if (over && checkCombo(Uno))
+        break;
+    }
+    else if (over && checkCombo(Uno)){
         printf("\nUno Wins\n");
-    else if (over && checkCombo(Tres))
+        break;
+    }
+    else if (over && checkCombo(Tres)){
         printf("\nTres Wins\n");
+        break;
+    }
 
     printBoard(F);
 
