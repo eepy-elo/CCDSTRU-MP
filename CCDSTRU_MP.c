@@ -151,9 +151,6 @@ startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
     int i, j, totalF = 16, player = 0;
     int x, y;
 
-    printf("Hi");
-    printf("\n%d", over);
-
 	while (!over) {
         playerName(player % 3);
 		printBoard(F);
