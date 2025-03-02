@@ -107,30 +107,26 @@ Search(int key, int *arr, int size)
 }
 
 int
-checkCombo(Array2D arr) // does not check correctly
+checkCombo(Array2D arr) // improve
 {
     int W[3][4] = {{11, 12, 13, 14}, {14, 23, 32, 41}, {41, 42, 43, 44}}; // Winning combinations
     int temp[16] = {0};
-    int ctr, i, j, k = 0;
+    int ctr = 0, i, j, k = 0;
 
     for (i = 0; i < MAX; i++)
         for (j = 0; j < MAX; j++)
-            if (arr[i][j])
+            if (arr[i][j] == 1)
             {
                 temp[k] = (i + 1) * 10 + (j + 1); // Converts (x, y) to a 2-digit integer
                 k++;
             }
 
-    for (i = 0; i < 3 && ctr != 4; i++)
+    for (i = 0; i < 3 && ctr < 4; i++) 
     {
         ctr = 0;
         for (j = 0; j < MAX; j++)
             if (Search(W[i][j], temp, k) >= 0)
-            {
-                //printf{"%d ", W[i][j]}; // Debugging
                 ctr++;
-                printf{"%d ", ctr}; // Debugging
-            }
     }
 
     if (ctr == 4)
