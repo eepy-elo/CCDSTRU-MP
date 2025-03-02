@@ -146,11 +146,14 @@ playerName(int num)
 }
 
 void
-startGame(Array2D arr1, Array2D arr2, Array2D arr3, Array2D board)
+startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 {
 	int go = FALSE, turn = TRUE, over = FALSE;
     int i, j, totalF = 16, player = 0;
     int x, y;
+
+    printf("Hi");
+    printf("\n%d", over);
 
 	while (!over) {
         playerName(player % 3);
@@ -165,14 +168,14 @@ startGame(Array2D arr1, Array2D arr2, Array2D arr3, Array2D board)
 				go = !go;
                 totalF--;
 			}
-			else (!go && F[x - 1][y - 1])
+			else if (!go && F[x - 1][y - 1])
 			{
 				Tres[x - 1][y - 1] = 1;
             	F[x - 1][y - 1] = 0;
 				go = !go;
                 totalF--;
 			}
-		else (!turn && !F[x - 1][y - 1])
+		else if (!turn && !F[x - 1][y - 1])
 		{
 			Uno[x - 1][y - 1] = 0;
 			Tres[x - 1][y - 1] = 0;
