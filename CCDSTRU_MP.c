@@ -11,7 +11,8 @@ typedef int Array2D[MAX][MAX];
 	@param : arr is the 2d array to be initialized
 	Pre-condition: 
 */
-void initializeArray(Array2D arr, int num)
+void 
+initializeArray(Array2D arr, int num)
 {
     int i, j;
 
@@ -92,7 +93,8 @@ getCoordinates(int *x, int *y)
     }
 }
 
-int Search(int key, int *arr, int size)
+int 
+Search(int key, int *arr, int size)
 {
     int i, found;
     found = -1;
@@ -103,7 +105,6 @@ int Search(int key, int *arr, int size)
 
     return found;
 }
-
 
 int
 checkCombo(Array2D arr) // improve
@@ -156,28 +157,37 @@ startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 		printBoard(F);
         getCoordinates(&x, &y);
 		if (turn)
-			if (go && F[x - 1][y - 1])
+			if (go)
 			{
-				Uno[x - 1][y - 1] = 1;
-            	F[x - 1][y - 1] = 0;
+                if (F[x - 1][y - 1])
+                {
+                    Uno[x - 1][y - 1] = 1;
+                    F[x - 1][y - 1] = 0;
+                    totalF--;
+                }
 				turn = !turn;
 				go = !go;
-                totalF--;
 			}
-			else if (!go && F[x - 1][y - 1])
+			else
 			{
-				Tres[x - 1][y - 1] = 1;
-            	F[x - 1][y - 1] = 0;
+				if (F[x - 1][y - 1])
+                {
+                    Tres[x - 1][y - 1] = 1;
+            	    F[x - 1][y - 1] = 0;
+                    totalF--;
+                }
 				go = !go;
-                totalF--;
 			}
-		else if (!turn && !F[x - 1][y - 1])
+		else
 		{
-			Uno[x - 1][y - 1] = 0;
-			Tres[x - 1][y - 1] = 0;
-            F[x - 1][y - 1] = 1;
+            if (!F[x - 1][y - 1])
+            {
+                Uno[x - 1][y - 1] = 0;
+                Tres[x - 1][y - 1] = 0;
+                F[x - 1][y - 1] = 1;
+                totalF++;
+            }
 			turn = !turn;
-            totalF++;
 		}
         over = checkCombo(Uno) || checkCombo(Tres) || totalF == 0;
         player++;
@@ -210,7 +220,7 @@ int main()
     initializeArray(Dos, 0);
     initializeArray(Tres, 0);
     initializeArray(F, 1);
-    startGame(Uno, Dos, Tres, F);
+	startGame(Uno, Dos, Tres, F);
 
     return 0;
 }
