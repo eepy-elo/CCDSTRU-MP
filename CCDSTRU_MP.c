@@ -257,7 +257,7 @@ int NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 
 /*
     Purpose: This function signifies the end of the game by printing the winning
-             player's name and board
+             player's name and the final board
     Returns: void
     @param : over is status of the game (1 if over, 0 if not)
     @param : Uno stores the board of occupied/unoccupied spaces of player Uno
@@ -278,22 +278,29 @@ void GameOver(int over, Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
                 totalF++;
 
     if (over && totalF == 0)
-    {
         printf("\n-------Dos Wins-------\n");
-        printBoard(F);
-    }
     else if (over && checkCombo(Uno))
-    {
         printf("\n-------Uno Wins-------\n");
-        printf("\n      Uno's Board");
-        printBoard(Uno);
-    }
     else if (over && checkCombo(Tres))
-    {
         printf("\n-------Tres Wins-------\n");
-        printf("\n      Tres' Board");
-        printBoard(Tres);
+    
+    // Print final board
+    printf("\n     1   2   3   4\n");
+    printf("   +---+---+---+---+\n");
+    for (i = 0; i < MAX; i++)
+    {
+        printf("%d  |", i + 1);
+        for (j = 0; j < MAX; j++)
+        {
+            if (Uno[i][j] == 1)
+                printf(" U |");
+            else if (Tres[i][j] == 1)
+                printf(" T |");
+            else printf(" X |");
+        }
+        printf("\n");
     }
+    printf("   +---+---+---+---+\n");
 }
 
 int main()
