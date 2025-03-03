@@ -6,6 +6,10 @@
 
 typedef int Array2D[MAX][MAX];
 
+/*
+    Purpose: This function clears the screen
+    Returns: void
+*/
 void clrscr()
 {
     system("@cls||clear");
@@ -16,7 +20,7 @@ void clrscr()
     Returns: void
     @param : arr is the 2d array to be initialized
     @param : num is the number the array is initialized to
-    Pre-condition: 
+    Pre-condition: number of elements in arr match MAX
 */
 void initializeArray(Array2D arr, int num)
 {
@@ -29,8 +33,8 @@ void initializeArray(Array2D arr, int num)
 
 /*
     Purpose: This function prints the contents of a 2D array in a 4x4 board.
-         The first row and column should print numbers 1-4 as the column
-                 and row coordinates, respectively.
+             The first row and column should print numbers 1-4 as the column
+             and row coordinates, respectively.
     Returns: void
     @param : arr is the 2d array to be printed
     Pre-condition: arr is initialized
@@ -58,7 +62,7 @@ void printBoard(Array2D arr)
     Returns: 1 if the input is between 1 and 4 inclusive,
                  otherwise it returns 0
     @param : input is the integer to be evaluated
-    Pre-condition:
+    Pre-condition: argument passed to function must be of type int
 */
 int isValidInput(int input)
 {
@@ -70,23 +74,24 @@ int isValidInput(int input)
 
 /*
     Purpose: This function asks the user for coordinates x and y. If the input
-                 is invalid, an error message will be displayed until the user
-                 enters a valid input.
+             is invalid, an error message will be displayed until the user
+             enters a valid input.
     Returns: void
     @param : *x stores the x coordinate
     @param : *y stores the y coordinate
-    @param : F 
+    @param : F is the 2d array where the coordinates will be marked
     @param : player specifies which player turn it is 
-    Pre-condition:
+    Pre-condition: arguments passed to function are of proper type
 */
 void getCoordinates(int *x, int *y, Array2D F, int player)
 {
     *x = 0;
     *y = 0;
+
     do
     {
         if (isValidInput(*x) && isValidInput(*y))
-            if ((player % 3 == 1 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 2) && !F[*x - 1][*y - 1])))
+            if ((player % 3 == 1 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 2) && !F[*x - 1][*y - 1]))
                 printf("\nThis space cannot be selected. Please enter a different coordinate.");
 
         printf("\nEnter row: ");
@@ -104,15 +109,16 @@ void getCoordinates(int *x, int *y, Array2D F, int player)
             printf("Invalid input. Enter column: ");
             scanf("%d", y);
         }
-    } while ((player % 3 == 1 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 2) && !F[*x - 1][*y - 1])));
+    } while ((player % 3 == 1 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 2) && !F[*x - 1][*y - 1]));
 }
+
 /*
     Purpose: This function uses linear search to search for a key in an array. 
     Returns: either (a) index of found key or (b) -1 to signify key is not found
     @param : key is the number to be searched for
     @param : *arr is the array to be searched
     @param : size is the number of elements to be searched
-    Pre-condition: 
+    Pre-condition: arguments passed to function are of proper type
 */
 int Search(int key, int *arr, int size)
 {
@@ -126,11 +132,14 @@ int Search(int key, int *arr, int size)
     return found;
 }
 
-// This function takes a 2D array and checks if it contains the winning combinations in W. 
-// If an index in the 2D array contains 1, it stores the row and column indices in array temp
-// as a 2-digit integer. 
-//     Example: arr[1][2] => 12
-// Once all the elements of a row in W is found in the 2D array, the function returns 1.  
+/*
+    Purpose: This function takes a 2D array and checks if it contains the winning combinations in W. 
+             If an index in the 2D array contains 1, it stores the row and column indices in array temp
+             as a 2-digit integer. Example: arr[1][2] => 12
+    Returns: either (a) 1 if all elements of a row in W is found in the 2D array (b) else 0
+    @param : arr is the array to be checked for combos
+    Pre-condition: number of elements in arr match MAX
+*/
 int checkCombo(Array2D arr) // improve
 {
     int W[3][4] = {{11, 12, 13, 14}, 
@@ -160,7 +169,12 @@ int checkCombo(Array2D arr) // improve
     else return 0;
 }
 
-// This function accepts a number and prints its corresponding player name.
+/*
+    Purpose: This function accepts a number and prints its corresponding player name.
+    Returns: either (a) 1 if all elements of a row in W is found in the 2D array (b) else 0
+    @param : num specifies which player's turn it is
+    Pre-condition: num is either 0, 1, or 2
+*/
 void playerName(int num)
 {
     switch (num)
@@ -177,13 +191,25 @@ void playerName(int num)
     }
 }
 
-// This function starts the game and loops it until a winning combination is found, 
-// or if all elements in the 2D matrix F are 0. The order of turns starts with player 
-// Tres, followed by Uno, then Dos. At each of their turns, players Uno and Tres can 
-// occupy a position in board F by entering its row and column index. On the contrary
-// player Dos inputs an occupied position by either Uno or Tres and makes it unoccupied.
-// An unoccupied position is marked as 1 while an occupied one is 0. The function returns
-// 1 if the game is over.
+/*
+    Purpose: This function starts the going through each player's turn (Uno, Dos, and Tres) and
+             repeats it until a player wins according to either:
+                (a) a winning combination is found or
+                (b) all elements in the 2d matrix F are 0
+
+             The player turn order starts with Uno, Dos, then Tres. Uno and Tres can occupy an
+             an unoccupied position in board F by entering its row and column index. While Dos can
+             unoccupy a position occupied by Tres or Uno in the same fashion.
+
+             An occupied position is marked as 1 while an occupied one is 0.
+                
+    Returns: 1 once the game is over
+    @param : Uno stores the board of occupied/unoccupied spaces of player Uno
+    @param : Dos stores the board of occupied/unoccupied spaces of player Dos
+    @param : Tres stores the board of occupied/unoccupied spaces of player Tres
+    @param : F is the 2d array where the coordinates will be marked
+    Pre-condition: number of elements of the arrays match MAX
+*/
 int NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 {
     int turn = TRUE, go = FALSE, over = FALSE;
@@ -229,7 +255,17 @@ int NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
     return over;
 }
 
-// This function prints the winning player's name and board.
+/*
+    Purpose: This function signifies the end of the game by printing the winning
+             player's name and board
+    Returns: void
+    @param : over is status of the game (1 if over, 0 if not)
+    @param : Uno stores the board of occupied/unoccupied spaces of player Uno
+    @param : Dos stores the board of occupied/unoccupied spaces of player Dos
+    @param : Tres stores the board of occupied/unoccupied spaces of player Tres
+    @param : F is the 2d array where the coordinates will be marked
+    Pre-condition: number of elements of the arrays match MAX
+*/
 void GameOver(int over, Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 {
     int i, j, totalF = 0;
