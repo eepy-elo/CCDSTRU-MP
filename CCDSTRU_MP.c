@@ -180,13 +180,13 @@ void playerName(int num)
     switch (num)
     {
     case 0:
-        printf("      Player Tres");
+        printf("%17s", "Player Uno");
         break;
     case 1:
-        printf("       Player Uno");
+        printf("%17s", "Player Dos");
         break;
     case 2:
-        printf("       Player Dos");
+        printf("%17s", "Player Tres"); 
         break;
     }
 }
