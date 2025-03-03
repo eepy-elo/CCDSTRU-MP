@@ -15,7 +15,8 @@ void clrscr()
     Purpose: This function sets the value of each 2d array element to a number.
     Returns: void
     @param : arr is the 2d array to be initialized
-    Pre-condition:
+    @param : num is the number the array is initialized to
+    Pre-condition: 
 */
 void initializeArray(Array2D arr, int num)
 {
@@ -72,8 +73,10 @@ int isValidInput(int input)
                  is invalid, an error message will be displayed until the user
                  enters a valid input.
     Returns: void
-    @param *x: stores the x coordinate
-        @param *y: stores the y coordinate
+    @param : *x stores the x coordinate
+    @param : *y stores the y coordinate
+    @param : F 
+    @param : player specifies which player turn it is 
     Pre-condition:
 */
 void getCoordinates(int *x, int *y, Array2D F, int player)
@@ -83,7 +86,7 @@ void getCoordinates(int *x, int *y, Array2D F, int player)
     do
     {
         if (isValidInput(*x) && isValidInput(*y))
-            if ((player % 3 == 2 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 1) && !F[*x - 1][*y - 1]))
+            if ((player % 3 == 1 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 2) && !F[*x - 1][*y - 1])))
                 printf("\nThis space cannot be selected. Please enter a different coordinate.");
 
         printf("\nEnter row: ");
@@ -101,10 +104,16 @@ void getCoordinates(int *x, int *y, Array2D F, int player)
             printf("Invalid input. Enter column: ");
             scanf("%d", y);
         }
-    } while ((player % 3 == 2 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 1) && !F[*x - 1][*y - 1]));
+    } while ((player % 3 == 1 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 2) && !F[*x - 1][*y - 1])));
 }
-
-// This function searches for a key in an array. It returns index if found and -1 if not.
+/*
+    Purpose: This function uses linear search to search for a key in an array. 
+    Returns: either (a) index of found key or (b) -1 to signify key is not found
+    @param : key is the number to be searched for
+    @param : *arr is the array to be searched
+    @param : size is the number of elements to be searched
+    Pre-condition: 
+*/
 int Search(int key, int *arr, int size)
 {
     int i, found;
@@ -173,9 +182,9 @@ void playerName(int num)
 // Tres, followed by Uno, then Dos. At each of their turns, players Uno and Tres can 
 // occupy a position in board F by entering its row and column index. On the contrary
 // player Dos inputs an occupied position by either Uno or Tres and makes it unoccupied.
-// An unoccupied position is marked as 1 while an occupied one is 0. Once the game is over,
-// the function will print the winning player's name and board.
-void startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
+// An unoccupied position is marked as 1 while an occupied one is 0. The function returns
+// 1 if the game is over.
+int NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 {
     int turn = TRUE, go = FALSE, over = FALSE;
     int totalF = 16, player = 0;
@@ -183,25 +192,26 @@ void startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 
     while (!over)
     {
+        clrscr();
         playerName(player % 3);
         printBoard(F);
         getCoordinates(&x, &y, F, player);
         if (turn)
         {
-            if (go && F[x - 1][y - 1])
+            if (!go && F[x - 1][y - 1])
             {
                 Uno[x - 1][y - 1] = 1;
                 F[x - 1][y - 1] = 0;
-                totalF--;
                 turn = !turn;
                 go = !go;
+                totalF--;
             }
-            else if (!go && F[x - 1][y - 1])
+            else if (go && F[x - 1][y - 1])
             {
                 Tres[x - 1][y - 1] = 1;
                 F[x - 1][y - 1] = 0;
-                totalF--;
                 go = !go;
+                totalF--;
             }
         }
         else if (!turn && !F[x - 1][y - 1])
@@ -209,13 +219,27 @@ void startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
             Uno[x - 1][y - 1] = 0;
             Tres[x - 1][y - 1] = 0;
             F[x - 1][y - 1] = 1;
-            totalF++;
             turn = !turn;
+            totalF++;
         }
         over = checkCombo(Uno) || checkCombo(Tres) || totalF == 0;
         player++;
-        clrscr();
     }
+
+    return over;
+}
+
+// This function prints the winning player's name and board.
+void GameOver(int over, Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
+{
+    int i, j, totalF = 0;
+    
+    clrscr();
+    
+    for (i = 0; i < MAX; i++)
+        for (j = 0; j < MAX; j++)
+            if (F[i][j] == 1)
+                totalF++;
 
     if (over && totalF == 0)
     {
@@ -238,14 +262,16 @@ void startGame(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 
 int main()
 {
-    Array2D Uno, Dos, Tres, F;
+    Array2D Uno, Dos, Tres, F; 
+    int over;
 
     initializeArray(Uno, 0);
     initializeArray(Dos, 0);
     initializeArray(Tres, 0);
     initializeArray(F, 1);
-    clrscr();
-    startGame(Uno, Dos, Tres, F);
+    
+    over = NextPlayerMove(Uno, Dos, Tres, F);
+    GameOver(over, Uno, Dos, Tres, F);
 
     return 0;
 }
