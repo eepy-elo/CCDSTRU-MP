@@ -15,6 +15,31 @@ void clrscr()
     system("@cls||clear");
 }
 
+void startMenu()
+{
+    clrscr();
+
+    printf("***********************************************\n");
+    printf("*           Welcome to the 4x4 Game!          *\n");
+    printf("***********************************************\n");
+    printf("*                                             *\n");
+    printf("*                    Rules:                   *\n");
+    printf("*  1. Player Uno and Tres can occupy an       *\n*     unoccupied position.                    *\n");
+    printf("*  2. Player Dos can unoccupy a position      *\n*     occupied by Uno or Tres.                *\n");
+    printf("*  3. The game ends when a player achieves    *\n*     a winning combination or all            *\n*     positions are occupied.                 *\n");
+    printf("*                                             *\n");
+    printf("*             Winning Combinations:           *\n");
+    printf("*        1. (1,1), (1,2), (1,3), (1,4)        *\n");
+    printf("*        2. (1,4), (2,3), (3,2), (4,1)        *\n");
+    printf("*        3. (4,1), (4,2), (4,3), (4,4)        *\n");
+    printf("*                                             *\n");
+    printf("***********************************************\n");
+    printf("*           Player Uno starts first.          *\n");
+    printf("*       Press Enter to start the game...      *\n");
+    printf("***********************************************\n");
+    getchar();
+}
+
 /*
     Purpose: This function sets the value of each 2d array element to a number.
     Returns: void
@@ -96,18 +121,22 @@ void getCoordinates(int *x, int *y, Array2D F, int player)
 
         printf("\nEnter row: ");
         scanf("%d", x);
+        getchar();
         while (!isValidInput(*x))
         {
             printf("Invalid input. Enter row: ");
             scanf("%d", x);
+            getchar();
         }
 
         printf("Enter column: ");
         scanf("%d", y);
+        getchar();
         while (!isValidInput(*y))
         {
             printf("Invalid input. Enter column: ");
             scanf("%d", y);
+            getchar();
         }
     } while ((player % 3 == 1 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 2) && !F[*x - 1][*y - 1]));
 }
@@ -278,11 +307,11 @@ void GameOver(int over, Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
                 totalF++;
 
     if (over && totalF == 0)
-        printf("\n-------Dos Wins-------\n");
+        printf("-------Dos Wins-------\n");
     else if (over && checkCombo(Uno))
-        printf("\n-------Uno Wins-------\n");
+        printf("-------Uno Wins-------\n");
     else if (over && checkCombo(Tres))
-        printf("\n-------Tres Wins-------\n");
+        printf("-------Tres Wins-------\n");
     
     // Print final board
     printf("\n     1   2   3   4\n");
@@ -306,15 +335,21 @@ void GameOver(int over, Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 int main()
 {
     Array2D Uno, Dos, Tres, F; 
-    int over;
-
-    initializeArray(Uno, 0);
-    initializeArray(Dos, 0);
-    initializeArray(Tres, 0);
-    initializeArray(F, 1);
+    int over, play = 1;
     
-    over = NextPlayerMove(Uno, Dos, Tres, F);
-    GameOver(over, Uno, Dos, Tres, F);
+    while (play)
+    {
+        initializeArray(Uno, 0);
+        initializeArray(Dos, 0);
+        initializeArray(Tres, 0);
+        initializeArray(F, 1);
 
+        startMenu();
+        over = NextPlayerMove(Uno, Dos, Tres, F);
+        GameOver(over, Uno, Dos, Tres, F);
+
+        printf("\nPlay again? (1 for yes, 0 for no): ");
+        scanf("%d", &play);
+    }
     return 0;
 }
