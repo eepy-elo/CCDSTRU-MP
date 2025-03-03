@@ -15,7 +15,8 @@ void clrscr()
     Purpose: This function sets the value of each 2d array element to a number.
     Returns: void
     @param : arr is the 2d array to be initialized
-    Pre-condition:
+    @param : num is the number the array is initialized to
+    Pre-condition: 
 */
 void initializeArray(Array2D arr, int num)
 {
@@ -72,8 +73,10 @@ int isValidInput(int input)
                  is invalid, an error message will be displayed until the user
                  enters a valid input.
     Returns: void
-    @param *x: stores the x coordinate
-        @param *y: stores the y coordinate
+    @param : *x stores the x coordinate
+    @param : *y stores the y coordinate
+    @param : F 
+    @param : player specifies which player turn it is 
     Pre-condition:
 */
 void getCoordinates(int *x, int *y, Array2D F, int player)
@@ -103,8 +106,14 @@ void getCoordinates(int *x, int *y, Array2D F, int player)
         }
     } while ((player % 3 == 2 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 1) && !F[*x - 1][*y - 1]));
 }
-
-// This function searches for a key in an array. It returns index if found and -1 if not.
+/*
+    Purpose: This function uses linear search to search for a key in an array. 
+    Returns: either (a) index of found key or (b) -1 to signify key is not found
+    @param : key is the number to be searched for
+    @param : *arr is the array to be searched
+    @param : size is the number of elements to be searched
+    Pre-condition: 
+*/
 int Search(int key, int *arr, int size)
 {
     int i, found;
