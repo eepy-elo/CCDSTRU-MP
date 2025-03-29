@@ -1,10 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #define MAX 4
 #define TRUE 1
 #define FALSE 0
 
 typedef int Array2D[MAX][MAX];
+
+void exitMenu();
+void howToMenu();
+void creditsMenu();
+void comboListMenu();
+void changeCharacter();
 
 /*
     Purpose: This function clears the screen
@@ -17,27 +24,190 @@ void clrscr()
 
 void startMenu()
 {
-    clrscr();
+    int next;
 
-    printf("***********************************************\n");
-    printf("*           Welcome to the 4x4 Game!          *\n");
-    printf("***********************************************\n");
-    printf("*                                             *\n");
-    printf("*                    Rules:                   *\n");
-    printf("*  1. Player Uno and Tres can occupy an       *\n*     unoccupied position.                    *\n");
-    printf("*  2. Player Dos can unoccupy a position      *\n*     occupied by Uno or Tres.                *\n");
-    printf("*  3. The game ends when a player achieves    *\n*     a winning combination or all            *\n*     positions are occupied.                 *\n");
-    printf("*                                             *\n");
-    printf("*             Winning Combinations:           *\n");
-    printf("*        1. (1,1), (1,2), (1,3), (1,4)        *\n");
-    printf("*        2. (1,4), (2,3), (3,2), (4,1)        *\n");
-    printf("*        3. (4,1), (4,2), (4,3), (4,4)        *\n");
-    printf("*                                             *\n");
-    printf("***********************************************\n");
-    printf("*           Player Uno starts first.          *\n");
-    printf("*       Press Enter to start the game...      *\n");
-    printf("***********************************************\n");
-    getchar();
+    clrscr();
+    printf("\a");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║          \033[1m\033[31mWELCOME TO THE 4X4 GAME!\033[0m         ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    printf("║                                           ║\n");
+    printf("║   [1] How to play?                        ║\n");
+    printf("║   [2] Change Character                    ║\n");
+    printf("║   [3] Credits                             ║\n");
+    printf("║   [4] Exit Game                           ║\n");
+    printf("║ 𓅭                                         ║\n");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║       \033[5mEnter '5' to start the game...\033[0m      ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+
+    while (scanf("%d", &next) != 1 || (next != 1 && next != 2 &&
+                         next != 3 && next != 4 && next != 5))
+	{
+		printf("Invalid input, try again\n");
+		while (getchar() != '\n');
+	}
+    switch (next)
+    {
+       case 1: howToMenu(); break;
+       case 2: changeCharacter(); break;
+       case 3: creditsMenu(); break;
+       case 4: exitMenu(); break;
+    }
+}
+
+void howToMenu()
+{
+    int next;
+
+    clrscr();
+    printf("\a");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║                   \033[1m\033[31mRULES\033[0m                   ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    printf("║                                           ║\n");
+    printf("║   1. Player Uno and Tres can occupy an    ║\n");
+    printf("║      unoccupied position.                 ║\n");
+    printf("║   2. Player Dos can unoccupy a position   ║\n");
+    printf("║      occupied by Uno or Tres.             ║\n");
+    printf("║   3. The game ends when a player obtains  ║\n");
+    printf("║      a winning combination or all         ║\n");
+    printf("║      positions are occupied               ║\n");
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");
+    printf("║ 𓅭                  See Winning Combos [1] ║\n");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║       \033[5mEnter '0' to return to menu..\033[0m       ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+
+    while (scanf("%d", &next) != 1 || (next != 0 && next != 1))
+        {
+            printf("Invalid input, try again\n");
+            while (getchar() != '\n');
+        }
+
+    if (next == 1)
+    {
+        comboListMenu();
+    } else startMenu();
+
+}
+
+void comboListMenu()
+{
+    int next;
+
+    clrscr();
+    printf("\a");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║             \033[1m\033[31mCOMBINATIONS LIST\033[0m             ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    printf("║                                           ║\n");
+    printf("║       1. (1,1), (1,2), (1,3), (1,4)       ║\n");
+    printf("║       2. (1,4), (2,3), (3,2), (4,1)       ║\n");
+    printf("║       3. (4,1), (4,2), (4,3), (4,4)       ║\n");
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");
+    printf("║ 𓅭                    Go Back to Rules [1] ║\n");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║       \033[5mEnter '0' to return to menu..\033[0m       ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+
+    while (scanf("%d", &next) != 1 || (next != 0 && next != 1))
+        {
+            printf("Invalid input, try again\n");
+            while (getchar() != '\n');
+        }
+
+    if (next == 1)
+    {
+        howToMenu();
+    } else startMenu();
+
+}
+
+void changeCharacter()
+{
+    int next;
+
+    clrscr();
+    printf("\a");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║              \033[1m\033[31mCHANGE CHARACTER\033[0m             ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    printf("║                                           ║\n");
+    printf("║                  Set Theme                ║\n");
+    printf("║      [2] X and O's                        ║\n");
+    printf("║      [3]                                  ║\n");
+    printf("║      [4]                                  ║\n");
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");  
+    printf("║ 𓅭                                         ║\n");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║       \033[5mEnter '0' to return to menu..\033[0m       ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+
+    while (scanf("%d", &next) != 1 || next != 0 )
+        {
+            printf("Invalid input, try again\n");
+            while (getchar() != '\n');
+        }
+
+    startMenu();
+}
+
+void creditsMenu()
+{
+    int next;
+
+    clrscr();
+    printf("\a");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║                  \033[1m\033[31mCREDITS\033[0m                  ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    printf("║                                           ║\n");
+    printf("║                Created by:                ║\n");
+    printf("║        ^-^ Jessica Shielo Marc ^-^        ║\n");
+    printf("║                                           ║\n");
+    printf("║            Special Thanks to:             ║\n");
+    printf("║              Ms. Jazzie Jao               ║\n");
+    printf("║                                           ║\n");
+    printf("║ 𓅭                                         ║\n");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║       \033[5mEnter '0' to return to menu..\033[0m       ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+
+    while (scanf("%d", &next) != 1 || next != 0 )
+        {
+            printf("Invalid input, try again\n");
+            while (getchar() != '\n');
+        }
+
+    startMenu();
+}
+
+void exitMenu()
+{
+    clrscr();
+    printf("\a");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");
+    printf("║             THANKS FOR PLAYING!           ║\n");
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");
+    printf("║ 𓅭                                         ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    exit(0);
 }
 
 /*
@@ -64,22 +234,27 @@ void initializeArray(Array2D arr, int num)
     @param : arr is the 2d array to be printed
     Pre-condition: arr is initialized
 */
-void printBoard(Array2D arr)
+void printBoard(Array2D arr, int state)
 {
     int i, j;
-
     printf("\n     1   2   3   4\n");
-    printf("   +---+---+---+---+\n");
+    printf("   ┌───┬───┬───┬───┐\n");
     for (i = 0; i < MAX; i++)
     {
-        printf("%d  |", i + 1);
+        printf(" %d |", i + 1);
         for (j = 0; j < MAX; j++)
         {
-            printf(" %d |", arr[i][j]);
+            if (arr[i][j] == 1)
+                printf(" - |");
+            else if (arr[i][j] == 0)
+                printf(" O |");
         }
         printf("\n");
+
+        if (i < 3)
+            printf("   ├───┼───┼───┼───┤\n");
     }
-    printf("   +---+---+---+---+\n");
+    printf("   └───┴───┴───┴───┘\n");
 }
 
 /*
@@ -121,22 +296,22 @@ void getCoordinates(int *x, int *y, Array2D F, int player)
 
         printf("\nEnter row: ");
         scanf("%d", x);
-        getchar();
+        while (getchar() != '\n');
         while (!isValidInput(*x))
         {
             printf("Invalid input. Enter row: ");
             scanf("%d", x);
-            getchar();
+            while (getchar() != '\n');
         }
 
         printf("Enter column: ");
         scanf("%d", y);
-        getchar();
+        while (getchar() != '\n');
         while (!isValidInput(*y))
         {
             printf("Invalid input. Enter column: ");
             scanf("%d", y);
-            getchar();
+            while (getchar() != '\n');
         }
     } while ((player % 3 == 1 && F[*x - 1][*y - 1]) || ((player % 3 == 0 || player % 3 == 2) && !F[*x - 1][*y - 1]));
 }
@@ -206,6 +381,8 @@ int checkCombo(Array2D arr) // improve
 */
 void playerName(int num)
 {
+    printf("\n");
+
     switch (num)
     {
     case 0:
@@ -249,7 +426,7 @@ int NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
     {
         clrscr();
         playerName(player % 3);
-        printBoard(F);
+        printBoard(F, player % 2);
         getCoordinates(&x, &y, F, player);
         if (turn)
         {
