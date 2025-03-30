@@ -141,8 +141,8 @@ void changeCharacter()
     printf("╚═══════════════════════════════════════════╝\n");
     printf("║                                           ║\n");
     printf("║                  Set Theme                ║\n");
-    printf("║      [2] X and O's                        ║\n");
-    printf("║      [3]                                  ║\n");
+    printf("║      [2] X's and O's                      ║\n");
+    printf("║      [3] @'s and *'s                      ║\n");
     printf("║      [4]                                  ║\n");
     printf("║                                           ║\n");
     printf("║                                           ║\n");
