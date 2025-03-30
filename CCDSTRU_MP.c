@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAX 4
 #define TRUE 1
@@ -12,6 +13,9 @@ void howToMenu();
 void creditsMenu();
 void comboListMenu();
 void changeCharacter();
+void enterCharacter();
+void setGameMode();
+void setSuccess();
 
 /*
     Purpose: This function clears the screen
@@ -22,10 +26,12 @@ void clrscr()
     system("@cls||clear");
 }
 
-void startMenu()
+void startMenu(char playerChars[], int *playerMode)
 {
     int next;
 
+    do
+    {
     clrscr();
     printf("\a");
     printf("╔═══════════════════════════════════════════╗\n");
@@ -35,29 +41,32 @@ void startMenu()
     printf("║                                           ║\n");
     printf("║   [1] How to play?                        ║\n");
     printf("║   [2] Change Character                    ║\n");
-    printf("║   [3] Credits                             ║\n");
-    printf("║   [4] Exit Game                           ║\n");
+    printf("║   [3] Set Game Mode                       ║\n");
+    printf("║   [4] Credits                             ║\n");
+    printf("║   [5] Exit Game                           ║\n");
     printf("║ 𓅭                                         ║\n");
     printf("╔═══════════════════════════════════════════╗\n");
-    printf("║       \033[5mEnter '5' to start the game...\033[0m      ║\n");
+    printf("║       \033[5mEnter '6' to start the game...\033[0m      ║\n");
     printf("╚═══════════════════════════════════════════╝\n");
 
     while (scanf("%d", &next) != 1 || (next != 1 && next != 2 &&
-                         next != 3 && next != 4 && next != 5))
+                         next != 3 && next != 4 && next != 5 && next != 6))
 	{
 		printf("Invalid input, try again\n");
 		while (getchar() != '\n');
 	}
     switch (next)
     {
-       case 1: howToMenu(); break;
-       case 2: changeCharacter(); break;
-       case 3: creditsMenu(); break;
-       case 4: exitMenu(); break;
+       case 1: howToMenu(playerChars, playerMode); break;
+       case 2: changeCharacter(playerChars, playerMode); break;
+       case 3: setGameMode(playerChars, playerMode); break;
+       case 4: creditsMenu(playerChars, playerMode); break;
+       case 5: exitMenu(playerChars, playerMode); break;
     }
+} while (next != 6);
 }
 
-void howToMenu()
+void howToMenu (char playerChars[], int *playerMode)
 {
     int next;
 
@@ -90,12 +99,12 @@ void howToMenu()
 
     if (next == 1)
     {
-        comboListMenu();
-    } else startMenu();
+        comboListMenu(playerChars, playerMode);
+    } else return;
 
 }
 
-void comboListMenu()
+void comboListMenu (char playerChars[], int *playerMode)
 {
     int next;
 
@@ -124,12 +133,12 @@ void comboListMenu()
 
     if (next == 1)
     {
-        howToMenu();
-    } else startMenu();
+        howToMenu(playerChars, playerMode);
+    } else return;
 
 }
 
-void changeCharacter()
+void changeCharacter (char playerChars[], int *playerMode)
 {
     int next;
 
@@ -140,28 +149,168 @@ void changeCharacter()
     printf("║              \033[1m\033[31mCHANGE CHARACTER\033[0m             ║\n");
     printf("╚═══════════════════════════════════════════╝\n");
     printf("║                                           ║\n");
-    printf("║                  Set Theme                ║\n");
-    printf("║      [2] X's and O's                      ║\n");
-    printf("║      [3] @'s and *'s                      ║\n");
-    printf("║      [4]                                  ║\n");
+    printf("║                CURRENT THEME              ║\n");
+    printf("║                   %c and %c                 ║\n", playerChars[0], playerChars[1]);
     printf("║                                           ║\n");
+    printf("║-------------------------------------------║\n");
     printf("║                                           ║\n");
+    printf("║                  SET THEME                ║\n");
+    printf("║      [1] X's and O's                      ║\n");
+    printf("║      [2] @'s and *'s                      ║\n");
+    printf("║      [3] 1's and 3's                      ║\n");
+    printf("║      [4] Custom                           ║\n");
     printf("║                                           ║\n");  
     printf("║ 𓅭                                         ║\n");
     printf("╔═══════════════════════════════════════════╗\n");
     printf("║       \033[5mEnter '0' to return to menu..\033[0m       ║\n");
     printf("╚═══════════════════════════════════════════╝\n");
 
-    while (scanf("%d", &next) != 1 || next != 0 )
+    while (scanf("%d", &next) != 1 || (next != 0 && next != 1 && next != 2 && next != 3 ))
         {
             printf("Invalid input, try again\n");
             while (getchar() != '\n');
         }
 
-    startMenu();
+    switch (next)
+    {
+        case 1: playerChars[0] = 'X'; playerChars[1] = 'O'; setSuccess(playerChars, playerMode, 0); break;
+        case 2: playerChars[0] = '@'; playerChars[1] = '*'; setSuccess(playerChars, playerMode, 0); break;
+        case 3: playerChars[0] = '1'; playerChars[1] = '3'; setSuccess(playerChars, playerMode, 0); break;
+        case 4: enterCharacter(playerChars, playerMode); break;
+    }
+
+    return;
 }
 
-void creditsMenu()
+void enterCharacter (char playerChars[], int *playerMode)
+{
+    int ctr = 0, valid;
+    char next, playerNames[2][5] = {"UNO ", "TRES"};
+
+    do
+    {
+    clrscr();
+    printf("\a");
+    valid = 0;
+
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║               \033[1m\033[31mENTER CHARACTER\033[0m             ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    printf("║                                           ║\n");
+    printf("║            ENTER CHARACTER FOR            ║\n");
+    printf("║                PLAYER %s                ║\n", playerNames[ctr]);
+    printf("║                                           ║\n");  
+    printf("║ 𓅭                                         ║\n");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║           \033[5mEnter '0' to cancel..\033[0m           ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+
+    do 
+    {
+        if (scanf(" %c", &next) == 1) 
+        {
+            if (next == '0')
+                return;
+
+            playerChars[ctr] = next;
+
+            valid = 1;  // Mark input as valid
+            ctr++;
+        }
+        else
+        {
+            printf("Invalid input, try again\n");
+        }
+    
+        while (getchar() != '\n');  // Clear input buffer
+    
+    } while (!valid);
+
+    } while (ctr < 2);
+
+    setSuccess(playerChars, playerMode, 0);
+}
+
+void setGameMode (char playerChars[], int *playerMode)
+{
+    int next;
+
+    clrscr();
+    printf("\a");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║                 \033[1m\033[31mGAME MODE\033[0m                 ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    printf("║                                           ║\n");
+    printf("║             CURRENT GAME MODE             ║\n");
+    if (*playerMode == 1) // "TWO"
+        printf("║              \033[1mTWO\033[0m-PLAYER MODE              ║\n");
+    else // "THREE"
+        printf("║             \033[1mTHREE\033[0m-PLAYER MODE             ║\n");
+    printf("║                                           ║\n");    
+    printf("║-------------------------------------------║\n");
+    printf("║                                           ║\n");
+    printf("║                  GAME MODES               ║\n");
+    printf("║      [2] Two Player Mode                  ║\n");
+    printf("║      [3] Three Player Mode                ║\n");
+    printf("║                                           ║\n");
+    printf("║ 𓅭                                         ║\n");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║       \033[5mEnter '0' to return to menu..\033[0m       ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+
+    while (scanf("%d", &next) != 1 || (next != 0 && next != 2 && next != 3))
+        {
+            printf("Invalid input, try again\n");
+            while (getchar() != '\n');
+        }
+
+    if (next == 0)
+        return;
+    else 
+    {
+        *playerMode = !(next % 2); // 2 = 1, 3 = 0
+        setSuccess(playerChars, playerMode, 1);
+    }
+
+}
+
+void setSuccess (char playerChars[], int *playerMode, int menu)
+{
+    int next;
+
+    clrscr();
+    printf("\a");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n"); 
+    printf("║                   \033[1m\033[31mSTATUS\033[0m                  ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+    printf("║                                           ║\n");
+    printf("║            ^ SET SUCCESSFULLY ^           ║\n");
+    printf("║                                           ║\n");
+    printf("║                                           ║\n");
+    printf("║ 𓅭                             [1] Go Back ║\n");
+    printf("╔═══════════════════════════════════════════╗\n");
+    printf("║       \033[5mEnter '0' to return to menu..\033[0m       ║\n");
+    printf("╚═══════════════════════════════════════════╝\n");
+
+    while (scanf("%d", &next) != 1 || (next != 0 && next != 1))
+        {
+            printf("Invalid input, try again\n");
+            while (getchar() != '\n');
+        }
+
+    if (next == 1)
+    {
+        if (menu == 0)
+            changeCharacter(playerChars, playerMode);
+        else setGameMode(playerChars, playerMode);
+    } else return;
+
+}
+
+void creditsMenu (char playerChars[], int *playerMode)
 {
     int next;
 
@@ -189,10 +338,10 @@ void creditsMenu()
             while (getchar() != '\n');
         }
 
-    startMenu();
+    return;
 }
 
-void exitMenu()
+void exitMenu ()
 {
     clrscr();
     printf("\a");
@@ -234,7 +383,7 @@ void initializeArray(Array2D arr, int num)
     @param : arr is the 2d array to be printed
     Pre-condition: arr is initialized
 */
-void printBoard(Array2D arr, int state)
+void printBoard(Array2D arr1, Array2D arr2, char playerChars[], int state)
 {
     int i, j;
     printf("\n     1   2   3   4\n");
@@ -244,10 +393,21 @@ void printBoard(Array2D arr, int state)
         printf(" %d |", i + 1);
         for (j = 0; j < MAX; j++)
         {
-            if (arr[i][j] == 1)
-                printf(" - |");
-            else if (arr[i][j] == 0)
-                printf(" O |");
+            switch (state)
+            {
+                case 0: 
+                    if (arr1[i][j] == 0 && arr2[i][j] == 0)
+                        printf(" - |");
+                    else printf(" O |");
+                    break;
+                case 1:
+                    if (arr1[i][j] == 1)
+                        printf(" %c |", playerChars[0]);
+                    else if (arr2[i][j] == 1)
+                        printf(" %c |", playerChars[1]);
+                    else printf(" - |");
+                    break;
+            }
         }
         printf("\n");
 
@@ -386,15 +546,26 @@ void playerName(int num)
     switch (num)
     {
     case 0:
-        printf("%17s", "Player Uno");
+        printf("\033[31m%17s\033[0m", "Player Uno");
         break;
     case 1:
-        printf("%17s", "Player Dos");
+        printf("\033[32m%17s\033[0m", "Player Dos");
         break;
     case 2:
-        printf("%17s", "Player Tres"); 
+        printf("\033[33m%17s\033[0m", "Player Tres"); 
         break;
     }
+}
+
+void
+randPlayer (Array2D arr, int *x, int *y)
+{
+    do
+    {
+        *x = rand() % 4 + 1;
+        *y = rand() % 4 + 1;
+
+    } while (arr[*x - 1][*y - 1]);
 }
 
 /*
@@ -416,7 +587,8 @@ void playerName(int num)
     @param : F is the 2d array where the coordinates will be marked
     Pre-condition: number of elements of the arrays match MAX
 */
-int NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
+int
+NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F, char playerChars[], int playerMode)
 {
     int turn = TRUE, go = FALSE, over = FALSE;
     int totalF = 16, player = 0;
@@ -424,10 +596,19 @@ int NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 
     while (!over)
     {
+        if (!(playerMode == 1 && player % 3 == 1)) // default is three players
+        {
         clrscr();
         playerName(player % 3);
-        printBoard(F, player % 2);
+
+        printBoard(Uno, Tres, playerChars, player % 3 != 1);
+
+        if (player % 3 == 2)
+            printf("\n    Dos removed %d %d\n", x, y);
+
         getCoordinates(&x, &y, F, player);
+        } else randPlayer(F, &x, &y);
+
         if (turn)
         {
             if (!go && F[x - 1][y - 1])
@@ -472,7 +653,7 @@ int NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
     @param : F is the 2d array where the coordinates will be marked
     Pre-condition: number of elements of the arrays match MAX
 */
-void GameOver(int over, Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
+void GameOver(int over, char playerChars[], Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
 {
     int i, j, totalF = 0;
     
@@ -484,35 +665,22 @@ void GameOver(int over, Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
                 totalF++;
 
     if (over && totalF == 0)
-        printf("-------Dos Wins-------\n");
+        printf("\n--------Dos Wins--------\n");
     else if (over && checkCombo(Uno))
-        printf("-------Uno Wins-------\n");
+        printf("\n--------Uno Wins--------\n");
     else if (over && checkCombo(Tres))
-        printf("-------Tres Wins-------\n");
+        printf("\n--------Tres Wins--------\n");
     
     // Print final board
-    printf("\n     1   2   3   4\n");
-    printf("   +---+---+---+---+\n");
-    for (i = 0; i < MAX; i++)
-    {
-        printf("%d  |", i + 1);
-        for (j = 0; j < MAX; j++)
-        {
-            if (Uno[i][j] == 1)
-                printf(" U |");
-            else if (Tres[i][j] == 1)
-                printf(" T |");
-            else printf(" X |");
-        }
-        printf("\n");
-    }
-    printf("   +---+---+---+---+\n");
+    printBoard(Uno, Tres, playerChars, 1);
 }
-
 int main()
 {
     Array2D Uno, Dos, Tres, F; 
-    int over, play = 1;
+    int over, playerMode = 0, play = 1;
+    char playerChars[2] = {'1', '3'};
+
+    srand(time(0));
     
     while (play)
     {
@@ -521,9 +689,9 @@ int main()
         initializeArray(Tres, 0);
         initializeArray(F, 1);
 
-        startMenu();
-        over = NextPlayerMove(Uno, Dos, Tres, F);
-        GameOver(over, Uno, Dos, Tres, F);
+        startMenu(playerChars, &playerMode);
+        over = NextPlayerMove(Uno, Dos, Tres, F, playerChars, playerMode);
+        GameOver(over, playerChars, Uno, Dos, Tres, F);
 
         printf("\nPlay again? (1 for yes, 0 for no): ");
         scanf("%d", &play);
