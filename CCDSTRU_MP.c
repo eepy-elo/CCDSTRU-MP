@@ -247,7 +247,7 @@ startMenu(char playerChars[], int *playerMode)
         printf("\a");
         printf("╔═══════════════════════════════════════════╗\n");
         printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n");
-        printf("║          \033[1m\033[31mWELCOME TO THE 4X4 GAME!\033[0m         ║\n");
+        printf("║         \033[1m\033[31mWELCOME TO THE CTRL Z GAME!\033[0m       ║\n");
         printf("╚═══════════════════════════════════════════╝\n");
         printf("║                                           ║\n");
         printf("║   [1] How to play?                        ║\n");
@@ -911,11 +911,11 @@ GameOver(int over, char playerChars[], boardType Boards, comboType Combos)
                 totalF++; // counts if all spaces are occupied
 
     if (over && totalF == 0)
-        printf("\033[36m\033[1m-------DOS WINS-------\033[0m\n");
+        printf("\n\033[36m\033[1m ------ DOS WINS ------\033[0m\n");
     else if (over && checkCombo(Boards.Uno, Combos))
-        printf("\033[33m\033[1m-------UNO WINS-------\033[0m\n");
+        printf("\n\033[33m\033[1m ------ UNO WINS ------\033[0m\n");
     else if (over && checkCombo(Boards.Tres, Combos))
-        printf("\033[35m\033[1m-------TRES WINS-------\033[0m\n");
+        printf("\n\033[35m\033[1m ------ TRES WINS ------\033[0m\n");
 
     // prints final board
     printBoard(Boards.Uno, Boards.Tres, playerChars, 1);
