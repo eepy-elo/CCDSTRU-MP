@@ -33,7 +33,10 @@ students and/or persons.
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <windows.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+#endif
 
 #define MAX 4
 #define TRUE 1
@@ -84,7 +87,10 @@ clrscr()
     system("@cls||clear");
 }
 
-// Function to set UTF-8 encoding
+/*
+    Purpose: This function sets UTF-8 encoding
+    Returns: void
+*/
 void setUTF8Encoding() {
     system("chcp 65001 > nul"); // Set to UTF-8
 }
@@ -831,7 +837,7 @@ NextPlayerMove(boardType Boards, char playerChars[], int playerMode)
         {
             Boards.Uno[x - 1][y - 1] = 0;
             Boards.Tres[x - 1][y - 1] = 0;
-            F[x - 1][y - 1] = 1;
+            Boards.F[x - 1][y - 1] = 1;
             turn = !turn;
             totalF++;
         }
@@ -894,9 +900,9 @@ main()
 
         startMenu(playerChars, &playerMode); // prints start menu
 
-        over = NextPlayerMove(Boards.Uno, Boards.Dos, Boards.Tres, Boards.F, playerChars, playerMode); // starts game loop
+        over = NextPlayerMove(Boards, playerChars, playerMode); // starts game loop
 
-        GameOver(over, playerChars, Boards.Uno, Boards.Dos, Boards.Tres, Boards.F); // prints winner board and game over screen
+        GameOver(over, playerChars, Boards); // prints winner board and game over screen
 
         printf("\nStart again? (\033[32m1 for yes\033[0m, \033[31m0 for no\033[0m): ");
         // asks if user wants to play again
