@@ -684,7 +684,7 @@ printBoard(Matrix Uno, Matrix Tres, char playerChars[], int state)
                 if (Uno[i][j] == 0 && Tres[i][j] == 0)
                     printf(" - |"); // unoccupied
                 else
-                    printf(" O |"); // occupied
+                    printf(" \033[36mO\033[0m |"); // occupied
                 break;
             case 1:                  // displays player Uno and Tres screen
                 if (Uno[i][j] == 1) // occupied by Uno
@@ -821,7 +821,7 @@ getCoordinates(int *x, int *y, Matrix F, int player)
     Pre-condition: number of elements of the arrays match MAX
 */
 int
-NextPlayerMove(boardType Boards, comboType Combos, char playerChars[], int playerMode)
+NextPlayerMove(boardType * Boards, comboType Combos, char playerChars[], int playerMode)
 {
     int turn = TRUE, go = FALSE, over = FALSE; // initializes according to specs
     int totalF = 16, turnNumber = 0, player;
@@ -835,44 +835,44 @@ NextPlayerMove(boardType Boards, comboType Combos, char playerChars[], int playe
             clrscr();
             playerName(player);
 
-            printBoard(Boards.Uno, Boards.Tres, playerChars, player != 1);
+            printBoard(Boards->Uno, Boards->Tres, playerChars, player != 1);
 
             if (player == 2)
                 printf("\n    \033[36mDos\033[0m removed \033[31m%d %d\033[0m\n", x, y);
             // prints what player Dos unoccupied
 
-            getCoordinates(&x, &y, Boards.F, player);
+            getCoordinates(&x, &y, Boards->F, player);
         }
         else
-            randPlayer(Boards.F, &x, &y); // two-player game mode and player Dos' turn
+            randPlayer(Boards->F, &x, &y); // two-player game mode and player Dos' turn
 
         if (turn)
         {
-            if (!go && Boards.F[x - 1][y - 1]) // player Uno's turn
+            if (!go && Boards->F[x - 1][y - 1]) // player Uno's turn
             {
-                Boards.Uno[x - 1][y - 1] = 1;
-                Boards.F[x - 1][y - 1] = 0;
+                Boards->Uno[x - 1][y - 1] = 1;
+                Boards->F[x - 1][y - 1] = 0;
                 turn = !turn;
                 go = !go;
                 totalF--;
             }
-            else if (go && Boards.F[x - 1][y - 1]) // player Tres' turn
+            else if (go && Boards->F[x - 1][y - 1]) // player Tres' turn
             {
-                Boards.Tres[x - 1][y - 1] = 1;
-                Boards.F[x - 1][y - 1] = 0;
+                Boards->Tres[x - 1][y - 1] = 1;
+                Boards->F[x - 1][y - 1] = 0;
                 go = !go;
                 totalF--;
             }
         }
-        else if (!turn && !Boards.F[x - 1][y - 1]) // player Dos' turn
+        else if (!turn && !Boards->F[x - 1][y - 1]) // player Dos' turn
         {
-            Boards.Uno[x - 1][y - 1] = 0;
-            Boards.Tres[x - 1][y - 1] = 0;
-            Boards.F[x - 1][y - 1] = 1;
+            Boards->Uno[x - 1][y - 1] = 0;
+            Boards->Tres[x - 1][y - 1] = 0;
+            Boards->F[x - 1][y - 1] = 1;
             turn = !turn;
             totalF++;
         }
-        over = checkCombo(Boards.Uno, Combos) || checkCombo(Boards.Tres, Combos) || totalF == 0; // indicates if there is winner
+        over = checkCombo(Boards->Uno, Combos) || checkCombo(Boards->Tres, Combos) || totalF == 0; // indicates if there is winner
         turnNumber++;                                              // adds to turn counter
     }
 
@@ -899,9 +899,6 @@ GameOver(int over, char playerChars[], boardType Boards, comboType Combos)
         for (j = 0; j < MAX; j++)
             if (Boards.F[i][j] == 1)
                 totalF++; // counts if all spaces are occupied
-
-    printf("--%d--\n", checkCombo(Boards.Uno, Combos));
-    printf("--%d--\n", checkCombo(Boards.Tres, Combos));
 
     if (over && totalF == 0)
         printf("\033[36m\033[1m-------DOS WINS-------\033[0m\n");
@@ -943,7 +940,7 @@ main()
 
         startMenu(playerChars, &playerMode); // prints start menu
 
-        over = NextPlayerMove(Boards, Combos, playerChars, playerMode); // starts game loop
+        over = NextPlayerMove(&Boards, Combos, playerChars, playerMode); // starts game loop
 
         GameOver(over, playerChars, Boards, Combos); // prints winner board and game over screen
 
