@@ -24,7 +24,7 @@ students and/or persons.
                 Shielo Heart D. Lunario
                 Marc A. De Roca
 
- Last modified: March 31, 2025
+ Last modified: April 1, 2025
 
  Version: V3
 
@@ -52,7 +52,15 @@ struct boardTag
     Matrix F; // matrix for occupied and unoccupied spaces
 };
 
-typedef struct boardTag boardType; // defines a new type
+typedef struct boardTag boardType; // sets alias for struct boardTag
+
+struct comboTag
+{
+    Matrix W;
+    int rowsW;
+};
+
+typedef struct comboTag comboType; // sets alias for struct comboTag
 
 void clrscr();
 void initializeMatrix();
@@ -112,6 +120,30 @@ initializeMatrix(Matrix board, int num)
             board[i][j] = num; // sets matrix element to num
 }
 
+void
+defineW(Matrix C, int T[], comboType * Combos)
+{
+    int i, j, ctr = 0;
+    Combos->rowsW = 0;
+
+    for (i = 0; i < MAX; i++)
+    {
+        ctr = 0;
+        for (j = 0; j < MAX && ctr < MAX; j++)
+        {
+            if (Search(T[j], C[i], MAX) >= 0) // check if set C[i] is equal to set T
+                ctr++;
+        }
+
+        if (ctr != MAX) // all sets in C that are not equal to T are stored in W
+        {
+            for (j = 0; j < MAX; j++)
+                Combos->W[Combos->rowsW][j] = C[i][j];
+            Combos->rowsW++;
+        }
+    }
+}
+
 /*
     Purpose: This function checks the validity of an integer input.
     Returns: 1 if the input is between 1 and 4 inclusive,
@@ -155,14 +187,13 @@ Search(int key, int arr[], int size)
              temp as a 2-digit integer. Example: arr[1][2] => 12
     Returns: either (a) 1 if all elements of a row in W is found in the 2D array (b) else 0
     @param : board is the matrix to be checked for combos
-    Pre-condition: number of elements in arr match MAX
+    @param : W contains the set of combos to be used for checking
+    @param : rowsW is the number of rows in W
+    Pre-condition: number of elements in board match MAX * MAX
 */
 int
-checkCombo(Matrix board)
+checkCombo(Matrix board, comboType Combos) // include rows in W
 {
-    int W[3][4] = {{11, 12, 13, 14},
-                   {14, 23, 32, 41},
-                   {41, 42, 43, 44}}; // winning combinations
     int temp[16] = {0};
     int ctr = 0, i, j, k = 0;
 
@@ -174,11 +205,11 @@ checkCombo(Matrix board)
                 k++;
             }
 
-    for (i = 0; i < 3 && ctr < 4; i++)
+    for (i = 0; i < Combos.rowsW && ctr < 4; i++)
     {
         ctr = 0;
         for (j = 0; j < MAX; j++)
-            if (Search(W[i][j], temp, k) >= 0)
+            if (Search(Combos.W[i][j], temp, k) >= 0)
                 ctr++; // adds to ctr if there is part of winning combo
     }
 
@@ -790,7 +821,7 @@ getCoordinates(int *x, int *y, Matrix F, int player)
     Pre-condition: number of elements of the arrays match MAX
 */
 int
-NextPlayerMove(boardType Boards, char playerChars[], int playerMode)
+NextPlayerMove(boardType Boards, comboType Combos, char playerChars[], int playerMode)
 {
     int turn = TRUE, go = FALSE, over = FALSE; // initializes according to specs
     int totalF = 16, turnNumber = 0, player;
@@ -841,7 +872,7 @@ NextPlayerMove(boardType Boards, char playerChars[], int playerMode)
             turn = !turn;
             totalF++;
         }
-        over = checkCombo(Boards.Uno) || checkCombo(Boards.Tres) || totalF == 0; // indicates if there is winner
+        over = checkCombo(Boards.Uno, Combos) || checkCombo(Boards.Tres, Combos) || totalF == 0; // indicates if there is winner
         turnNumber++;                                              // adds to turn counter
     }
 
@@ -858,7 +889,7 @@ NextPlayerMove(boardType Boards, char playerChars[], int playerMode)
     Pre-condition: number of elements of the arrays match MAX
 */
 void
-GameOver(int over, char playerChars[], boardType Boards)
+GameOver(int over, char playerChars[], boardType Boards, comboType Combos)
 {
     int i, j, totalF = 0;
 
@@ -869,11 +900,14 @@ GameOver(int over, char playerChars[], boardType Boards)
             if (Boards.F[i][j] == 1)
                 totalF++; // counts if all spaces are occupied
 
+    printf("--%d--\n", checkCombo(Boards.Uno, Combos));
+    printf("--%d--\n", checkCombo(Boards.Tres, Combos));
+
     if (over && totalF == 0)
         printf("\033[36m\033[1m-------DOS WINS-------\033[0m\n");
-    else if (over && checkCombo(Boards.Uno))
+    else if (over && checkCombo(Boards.Uno, Combos))
         printf("\033[33m\033[1m-------UNO WINS-------\033[0m\n");
-    else if (over && checkCombo(Boards.Tres))
+    else if (over && checkCombo(Boards.Tres, Combos))
         printf("\033[35m\033[1m-------TRES WINS-------\033[0m\n");
 
     // prints final board
@@ -884,11 +918,20 @@ int
 main()
 {
     boardType Boards; // boards
+    comboType Combos;
     int over, playerMode = 0, play = 1;
     char playerChars[2] = {'1', '3'}; // sets default player characters
 
+    Matrix C = {{11, 12, 13, 14},
+                {11, 22, 33, 44},
+                {14, 23, 32, 41},
+                {41, 42, 43, 44}}; // matrix to be checked
+    
+    int T[4] = {11, 22, 33, 44}; 
+
     setUTF8Encoding();
     srand(time(0)); // sets time to help random generator
+    defineW(C, T, &Combos);
 
     while (play)
     {
@@ -900,9 +943,9 @@ main()
 
         startMenu(playerChars, &playerMode); // prints start menu
 
-        over = NextPlayerMove(Boards, playerChars, playerMode); // starts game loop
+        over = NextPlayerMove(Boards, Combos, playerChars, playerMode); // starts game loop
 
-        GameOver(over, playerChars, Boards); // prints winner board and game over screen
+        GameOver(over, playerChars, Boards, Combos); // prints winner board and game over screen
 
         printf("\nStart again? (\033[32m1 for yes\033[0m, \033[31m0 for no\033[0m): ");
         // asks if user wants to play again
