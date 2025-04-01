@@ -81,7 +81,7 @@ void exitMenu();
 void printBoard();
 void playerName();
 void randPlayer();
-void getCoordinates();
+void getPositions();
 int NextPlayerMove();
 void GameOver();
 
@@ -120,6 +120,16 @@ initializeMatrix(Matrix board, int num)
             board[i][j] = num; // sets matrix element to num
 }
 
+/*
+    Purpose: This function defines set W by filtering sets from matrix C that are not equal 
+             to set T. Sets that differ from T are stored in Combos->W, with the number of 
+             rows stored in Combos->rowsW.
+    Returns: void
+    @param : C is the matrix containing all sets
+    @param : T[] is the target set to compare against
+    @param : Combos is a structure storing matrix W and its row count
+    Pre-condition: C, T, and Combos are initialized and have valid values
+*/
 void
 defineW(Matrix C, int T[], comboType * Combos)
 {
@@ -201,7 +211,7 @@ checkCombo(Matrix board, comboType Combos) // include rows in W
         for (j = 0; j < MAX; j++)
             if (board[i][j] == 1)
             {
-                temp[k] = (i + 1) * 10 + (j + 1); // converts (x, y) to a 2-digit integer
+                temp[k] = (i + 1) * 10 + (j + 1); // converts (x, col) to a 2-digit integer
                 k++;
             }
 
@@ -393,7 +403,7 @@ changeCharacter(char playerChars[], int *playerMode)
     printf("║-------------------------------------------║\n");
     printf("║                                           ║\n");
     printf("║                  SET THEME                ║\n");
-    printf("║      [1] X's and O's                      ║\n");
+    printf("║      [1] row's and O's                      ║\n");
     printf("║      [2] @'s and *'s                      ║\n");
     printf("║      [3] 1's and 3's                      ║\n");
     printf("║      [4] Custom                           ║\n");
@@ -659,12 +669,12 @@ exitMenu()
 /*
     Purpose: This function prints the contents of a matrix in a 4x4 board.
              The first row and column should print numbers 1-4 as the column
-             and row coordinates, respectively.
+             and row positions, respectively.
     Returns: void
     @param : Uno is the board of player Uno
     @param : Tres is the board of player Tres
     @param : playerChars[] stores the chosen/default characters of each player
-    @param : state indicates if the owner of the occupied spaces are revealed (0 for not, 1 for yes)
+    @param : state indicates if the owner of the occupied spaces are revealed (0 for not, 1 for coles)
     Pre-condition: arguments are initialized
 */
 void
@@ -730,70 +740,70 @@ playerName(int num)
 }
 
 /*
-    Purpose: randomizes the x and y coordinate move of the player Dos
+    Purpose: randomizes the row and col position move of the player Dos
     Returns: void
-    @param : *x stores the x coordinate
-    @param : *y stores the y coordinate
+    @param : *row stores the row position
+    @param : *col stores the col position
     @param : F stores the occupied and unoccupied spaces
     Pre-condition: arguments passed to function are of proper type
 */
 void
-randPlayer(Matrix F, int *x, int *y)
+randPlayer(Matrix F, int *row, int *col)
 {
     do
     {
-        *x = rand() % 4 + 1; // generates random number from 1-4
-        *y = rand() % 4 + 1;
+        *row = rand() % 4 + 1; // generates random number from 1-4
+        *col = rand() % 4 + 1;
 
-    } while (F[*x - 1][*y - 1]); // repeats while x and y is unnocupied
+    } while (F[*row - 1][*col - 1]); // repeats while row and col is unnocupied
 }
 
 /*
-    Purpose: This function asks the user for coordinates x and y. If the input
+    Purpose: This function asks the user for positions row and col. If the input
              is invalid, an error message will be displayed until the user
              enters a valid input.
     Returns: void
-    @param : *x stores the x coordinate
-    @param : *y stores the y coordinate
-    @param : F is the matrix where the coordinates will be marked
+    @param : *row stores the row position
+    @param : *col stores the col position
+    @param : F is the matrix where the positions will be marked
     @param : player specifies whose turn it is
     Pre-condition: arguments passed to function are of proper type
 */
 void
-getCoordinates(int *x, int *y, Matrix F, int player)
+getPositions(int *row, int *col, Matrix F, int player)
 {
 
-    *x = 0; // initializes to zero
-    *y = 0;
+    *row = 0; // initializes to zero
+    *col = 0;
 
     do
     {
-        // checks if *x and *y are between 1 and 4
-        if (isValidInput(*x) && isValidInput(*y))
-            if ((player == 1 && F[*x - 1][*y - 1]) || (player != 1 && !F[*x - 1][*y - 1]))
-                printf("\nThis space cannot be selected. Please enter a different coordinate.");
+        // checks if *row and *col are between 1 and 4
+        if (isValidInput(*row) && isValidInput(*col))
+            if ((player == 1 && F[*row - 1][*col - 1]) || (player != 1 && !F[*row - 1][*col - 1]))
+                printf("\nThis space cannot be selected. Please enter a different position.");
         // informs user that player cannot occupy/unoccupy that space
 
         printf("\nEnter row: ");
-        scanf("%d", x);
+        scanf("%d", row);
         while (getchar() != '\n'); // clears buffer
-        while (!isValidInput(*x))
+        while (!isValidInput(*row))
         {
             printf("Invalid input. Enter row: ");
-            scanf("%d", x);
+            scanf("%d", row);
             while (getchar() != '\n');
         }
 
         printf("Enter column: ");
-        scanf("%d", y);
+        scanf("%d", col);
         while (getchar() != '\n');
-        while (!isValidInput(*y))
+        while (!isValidInput(*col))
         {
             printf("Invalid input. Enter column: ");
-            scanf("%d", y);
+            scanf("%d", col);
             while (getchar() != '\n');
         }
-    } while ((player == 1 && F[*x - 1][*y - 1]) || (player != 1 && !F[*x - 1][*y - 1]));
+    } while ((player == 1 && F[*row - 1][*col - 1]) || (player != 1 && !F[*row - 1][*col - 1]));
     // repeats while no valid input has been made
 }
 
@@ -825,7 +835,7 @@ NextPlayerMove(boardType * Boards, comboType Combos, char playerChars[], int pla
 {
     int turn = TRUE, go = FALSE, over = FALSE; // initializes according to specs
     int totalF = 16, turnNumber = 0, player;
-    int x, y; // coordinates
+    int row, col; // positions
 
     while (!over) // repeats while no one wins
     {
@@ -838,37 +848,37 @@ NextPlayerMove(boardType * Boards, comboType Combos, char playerChars[], int pla
             printBoard(Boards->Uno, Boards->Tres, playerChars, player != 1);
 
             if (player == 2)
-                printf("\n    \033[36mDos\033[0m removed \033[31m%d %d\033[0m\n", x, y);
+                printf("\n    \033[36mDos\033[0m removed \033[31m%d %d\033[0m\n", row, col);
             // prints what player Dos unoccupied
 
-            getCoordinates(&x, &y, Boards->F, player);
+            getPositions(&row, &col, Boards->F, player);
         }
         else
-            randPlayer(Boards->F, &x, &y); // two-player game mode and player Dos' turn
+            randPlayer(Boards->F, &row, &col); // two-player game mode and player Dos' turn
 
         if (turn)
         {
-            if (!go && Boards->F[x - 1][y - 1]) // player Uno's turn
+            if (!go && Boards->F[row - 1][col - 1]) // player Uno's turn
             {
-                Boards->Uno[x - 1][y - 1] = 1;
-                Boards->F[x - 1][y - 1] = 0;
+                Boards->Uno[row - 1][col - 1] = 1;
+                Boards->F[row - 1][col - 1] = 0;
                 turn = !turn;
                 go = !go;
                 totalF--;
             }
-            else if (go && Boards->F[x - 1][y - 1]) // player Tres' turn
+            else if (go && Boards->F[row - 1][col - 1]) // player Tres' turn
             {
-                Boards->Tres[x - 1][y - 1] = 1;
-                Boards->F[x - 1][y - 1] = 0;
+                Boards->Tres[row - 1][col - 1] = 1;
+                Boards->F[row - 1][col - 1] = 0;
                 go = !go;
                 totalF--;
             }
         }
-        else if (!turn && !Boards->F[x - 1][y - 1]) // player Dos' turn
+        else if (!turn && !Boards->F[row - 1][col - 1]) // player Dos' turn
         {
-            Boards->Uno[x - 1][y - 1] = 0;
-            Boards->Tres[x - 1][y - 1] = 0;
-            Boards->F[x - 1][y - 1] = 1;
+            Boards->Uno[row - 1][col - 1] = 0;
+            Boards->Tres[row - 1][col - 1] = 0;
+            Boards->F[row - 1][col - 1] = 1;
             turn = !turn;
             totalF++;
         }
@@ -917,7 +927,16 @@ main()
     boardType Boards; // boards
     comboType Combos;
     int over, playerMode = 0, play = 1;
+    int i, j; // loop variables
     char playerChars[2] = {'1', '3'}; // sets default player characters
+
+    int A[MAX] = {1, 2, 3, 4}; 
+
+    Matrix P  = {0};
+
+    for (i = 0; i < MAX; i++)
+        for (j = 0; j < MAX; j++)
+            P[i][j] = A[i] * 10 + A[j]; // generates 2d matrix of all possible combinations
 
     Matrix C = {{11, 12, 13, 14},
                 {11, 22, 33, 44},
@@ -944,7 +963,7 @@ main()
 
         GameOver(over, playerChars, Boards, Combos); // prints winner board and game over screen
 
-        printf("\nStart again? (\033[32m1 for yes\033[0m, \033[31m0 for no\033[0m): ");
+        printf("\nStart again? (\033[32m1 for coles\033[0m, \033[31m0 for no\033[0m): ");
         // asks if user wants to play again
 
         while (scanf("%d", &play) != 1 || (play != 0 && play != 1)) // repeats asking input while invalid
