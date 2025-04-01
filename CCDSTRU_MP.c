@@ -121,6 +121,24 @@ initializeMatrix(Matrix board, int num)
 }
 
 /*
+    Purpose: This function generates a 2D matrix (P) representing all possible combinations
+             from array A.
+    Returns: void
+    @param : A[] is the input array containing values
+    @param : P is the matrix to store the combinations
+    Pre-condition: A and P are initialized and have valid values
+*/
+void
+defineP(int A[], Matrix P)
+{
+    int i, j;
+
+    for (i = 0; i < MAX; i++)
+        for (j = 0; j < MAX; j++)
+            P[i][j] = A[i] * 10 + A[j]; // generates 2d matrix of all possible combinations
+}
+
+/*
     Purpose: This function defines set W by filtering sets from matrix C that are not equal 
              to set T. Sets that differ from T are stored in Combos->W, with the number of 
              rows stored in Combos->rowsW.
@@ -932,11 +950,9 @@ main()
 
     int A[MAX] = {1, 2, 3, 4}; 
 
-    Matrix P  = {0};
+    Matrix P = {0};
 
-    for (i = 0; i < MAX; i++)
-        for (j = 0; j < MAX; j++)
-            P[i][j] = A[i] * 10 + A[j]; // generates 2d matrix of all possible combinations
+    defineP(A, P);
 
     Matrix C = {{11, 12, 13, 14},
                 {11, 22, 33, 44},
