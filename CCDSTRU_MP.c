@@ -813,7 +813,7 @@ NextPlayerMove(boardType Boards, char playerChars[], int playerMode)
             getCoordinates(&x, &y, Boards.F, player);
         }
         else
-            randPlayer(Boards.F, &x, &y); // two-player game mode
+            randPlayer(Boards.F, &x, &y); // two-player game mode and player Dos' turn
 
         if (turn)
         {
