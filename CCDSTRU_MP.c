@@ -229,7 +229,7 @@ checkCombo(Matrix board, comboType Combos) // include rows in W
         for (j = 0; j < MAX; j++)
             if (board[i][j] == 1)
             {
-                temp[k] = (i + 1) * 10 + (j + 1); // converts (x, col) to a 2-digit integer
+                temp[k] = (i + 1) * 10 + (j + 1); // converts (row, col) to a 2-digit integer
                 k++;
             }
 
@@ -421,7 +421,7 @@ changeCharacter(char playerChars[], int *playerMode)
     printf("║-------------------------------------------║\n");
     printf("║                                           ║\n");
     printf("║                  SET THEME                ║\n");
-    printf("║      [1] row's and O's                      ║\n");
+    printf("║      [1] X's and O's                      ║\n");
     printf("║      [2] @'s and *'s                      ║\n");
     printf("║      [3] 1's and 3's                      ║\n");
     printf("║      [4] Custom                           ║\n");
@@ -692,7 +692,7 @@ exitMenu()
     @param : Uno is the board of player Uno
     @param : Tres is the board of player Tres
     @param : playerChars[] stores the chosen/default characters of each player
-    @param : state indicates if the owner of the occupied spaces are revealed (0 for not, 1 for coles)
+    @param : state indicates if the owner of the occupied spaces are revealed (0 for not, 1 for yes)
     Pre-condition: arguments are initialized
 */
 void
@@ -758,10 +758,10 @@ playerName(int num)
 }
 
 /*
-    Purpose: randomizes the row and col position move of the player Dos
+    Purpose: randomizes the row and column position move of the player Dos
     Returns: void
     @param : *row stores the row position
-    @param : *col stores the col position
+    @param : *col stores the column position
     @param : F stores the occupied and unoccupied spaces
     Pre-condition: arguments passed to function are of proper type
 */
@@ -773,16 +773,16 @@ randPlayer(Matrix F, int *row, int *col)
         *row = rand() % 4 + 1; // generates random number from 1-4
         *col = rand() % 4 + 1;
 
-    } while (F[*row - 1][*col - 1]); // repeats while row and col is unnocupied
+    } while (F[*row - 1][*col - 1]); // repeats while row and column is unnocupied
 }
 
 /*
-    Purpose: This function asks the user for positions row and col. If the input
+    Purpose: This function asks the user for positions row and column. If the input
              is invalid, an error message will be displayed until the user
              enters a valid input.
     Returns: void
     @param : *row stores the row position
-    @param : *col stores the col position
+    @param : *col stores the column position
     @param : F is the matrix where the positions will be marked
     @param : player specifies whose turn it is
     Pre-condition: arguments passed to function are of proper type
@@ -978,7 +978,7 @@ main()
 
         GameOver(over, playerChars, Boards, Combos); // prints winner board and game over screen
 
-        printf("\nStart again? (\033[32m1 for coles\033[0m, \033[31m0 for no\033[0m): ");
+        printf("\nStart again? (\033[32m1 for yes\033[0m, \033[31m0 for no\033[0m): ");
         // asks if user wants to play again
 
         while (scanf("%d", &play) != 1 || (play != 0 && play != 1)) // repeats asking input while invalid
