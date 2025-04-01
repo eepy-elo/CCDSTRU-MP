@@ -945,7 +945,6 @@ main()
     boardType Boards; // boards
     comboType Combos;
     int over, playerMode = 0, play = 1;
-    int i, j; // loop variables
     char playerChars[2] = {'1', '3'}; // sets default player characters
 
     int A[MAX] = {1, 2, 3, 4}; 
