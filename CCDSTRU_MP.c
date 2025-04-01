@@ -24,44 +24,13 @@ students and/or persons.
                 Shielo Heart D. Lunario
                 Marc Alexis E. De Roca
 
- Last modified: March 31, 2025
+ Last modified: April 1, 2025
 
  Version: V3
 
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-#define MAX 4
-#define TRUE 1
-#define FALSE 0
-
-typedef int Array2D[MAX][MAX];
-
-void clrscr();
-void initializeArray();
-int isValidInput();
-int Search();
-int checkCombo();
-
-void startMenu();
-void howToMenu();
-void comboListMenu();
-void changeCharacter();
-void enterCharacter();
-void setGameMode();
-void setSuccess();
-void creditsMenu();
-void exitMenu();
-
-void printBoard();
-void playerName();
-void randPlayer();
-void getCoordinates();
-int NextPlayerMove();
-void GameOver();
+#include "header.h" // includes header file containing function prototypes and constants
 
 /*
     Purpose: This function clears the screen
@@ -74,20 +43,80 @@ clrscr()
 }
 
 /*
-    Purpose: This function sets the value of each 2d array element to a number.
+    Purpose: This function sets UTF-8 encoding
     Returns: void
-    @param : arr is the 2d array to be initialized
+*/
+void setUTF8Encoding() {
+    system("chcp 65001 > nul"); // Set to UTF-8
+}
+
+/*
+    Purpose: This function sets the value of each matrix element to a number.
+    Returns: void
+    @param : board is the matrix to be initialized
     @param : num is the number the array is initialized to
     Pre-condition: number of elements in arr match MAX
 */
 void
-initializeArray(Array2D arr, int num)
+initializeMatrix(Matrix board, int num)
 {
     int i, j;
 
     for (i = 0; i < MAX; i++)
         for (j = 0; j < MAX; j++)
-            arr[i][j] = num; // sets array element to num
+            board[i][j] = num; // sets matrix element to num
+}
+
+/*
+    Purpose: This function generates a 2D matrix (P) representing all possible combinations
+             from array A.
+    Returns: void
+    @param : A[] is the input array containing values
+    @param : P is the matrix to store the combinations
+    Pre-condition: A and P are initialized and have valid values
+*/
+void
+defineP(int A[], Matrix P)
+{
+    int i, j;
+
+    for (i = 0; i < MAX; i++)
+        for (j = 0; j < MAX; j++)
+            P[i][j] = A[i] * 10 + A[j]; // generates 2d matrix of all possible combinations
+}
+
+/*
+    Purpose: This function defines set W by filtering sets from matrix C that are not equal 
+             to set T. Sets that differ from T are stored in Combos->W, with the number of 
+             rows stored in Combos->rowsW.
+    Returns: void
+    @param : C is the matrix containing all sets
+    @param : T[] is the target set to compare against
+    @param : Combos is a structure storing matrix W and its row count
+    Pre-condition: C, T, and Combos are initialized and have valid values
+*/
+void
+defineW(Matrix C, int T[], comboType * Combos)
+{
+    int i, j, ctr = 0;
+    Combos->rowsW = 0;
+
+    for (i = 0; i < MAX; i++)
+    {
+        ctr = 0;
+        for (j = 0; j < MAX && ctr < MAX; j++)
+        {
+            if (Search(T[j], C[i], MAX) >= 0) // check if set C[i] is equal to set T
+                ctr++;
+        }
+
+        if (ctr != MAX) // all sets in C that are not equal to T are stored in W
+        {
+            for (j = 0; j < MAX; j++)
+                Combos->W[Combos->rowsW][j] = C[i][j];
+            Combos->rowsW++;
+        }
+    }
 }
 
 /*
@@ -115,7 +144,7 @@ isValidInput(int input)
     Pre-condition: arguments passed to function are of proper type
 */
 int
-Search(int key, int *arr, int size)
+Search(int key, int arr[], int size)
 {
     int i, found;
     found = -1;
@@ -128,35 +157,34 @@ Search(int key, int *arr, int size)
 }
 
 /*
-    Purpose: This function takes a 2D array and checks if it contains the winning combinations in W.
-             If an index in the 2D array contains 1, it stores the row and column indices in array temp
-             as a 2-digit integer. Example: arr[1][2] => 12
+    Purpose: This function takes a matrix and checks if it contains the winning combinations in W.
+             If an element in the matrix contains 1, it stores the row and column indices in array 
+             temp as a 2-digit integer. Example: arr[1][2] => 12
     Returns: either (a) 1 if all elements of a row in W is found in the 2D array (b) else 0
-    @param : arr is the array to be checked for combos
-    Pre-condition: number of elements in arr match MAX
+    @param : board is the matrix to be checked for combos
+    @param : W contains the set of combos to be used for checking
+    @param : rowsW is the number of rows in W
+    Pre-condition: number of elements in board match MAX * MAX
 */
 int
-checkCombo(Array2D arr)
+checkCombo(Matrix board, comboType Combos) // include rows in W
 {
-    int W[3][4] = {{11, 12, 13, 14},
-                   {14, 23, 32, 41},
-                   {41, 42, 43, 44}}; // winning combinations
     int temp[16] = {0};
     int ctr = 0, i, j, k = 0;
 
     for (i = 0; i < MAX; i++)
         for (j = 0; j < MAX; j++)
-            if (arr[i][j] == 1)
+            if (board[i][j] == 1)
             {
-                temp[k] = (i + 1) * 10 + (j + 1); // converts (x, y) to a 2-digit integer
+                temp[k] = (i + 1) * 10 + (j + 1); // converts (row, col) to a 2-digit integer
                 k++;
             }
 
-    for (i = 0; i < 3 && ctr < 4; i++)
+    for (i = 0; i < Combos.rowsW && ctr < 4; i++)
     {
         ctr = 0;
         for (j = 0; j < MAX; j++)
-            if (Search(W[i][j], temp, k) >= 0)
+            if (Search(Combos.W[i][j], temp, k) >= 0)
                 ctr++; // adds to ctr if there is part of winning combo
     }
 
@@ -184,7 +212,7 @@ startMenu(char playerChars[], int *playerMode)
         printf("\a");
         printf("╔═══════════════════════════════════════════╗\n");
         printf("║              .·:*¨ ༺ ༻  ¨*:·.             ║\n");
-        printf("║          \033[1m\033[31mWELCOME TO THE 4X4 GAME!\033[0m         ║\n");
+        printf("║         \033[1m\033[31mWELCOME TO THE CTRL Z GAME!\033[0m       ║\n");
         printf("╚═══════════════════════════════════════════╝\n");
         printf("║                                           ║\n");
         printf("║   [1] How to play?                        ║\n");
@@ -604,18 +632,18 @@ exitMenu()
 }
 
 /*
-    Purpose: This function prints the contents of a 2D array in a 4x4 board.
+    Purpose: This function prints the contents of a matrix in a 4x4 board.
              The first row and column should print numbers 1-4 as the column
-             and row coordinates, respectively.
+             and row positions, respectively.
     Returns: void
-    @param : arr1 is the 2d array of player Uno
-    @param : arr2 is the 2d array of player Tres
+    @param : Uno is the board of player Uno
+    @param : Tres is the board of player Tres
     @param : playerChars[] stores the chosen/default characters of each player
     @param : state indicates if the owner of the occupied spaces are revealed (0 for not, 1 for yes)
     Pre-condition: arguments are initialized
 */
 void
-printBoard(Array2D arr1, Array2D arr2, char playerChars[], int state)
+printBoard(Matrix Uno, Matrix Tres, char playerChars[], int state)
 {
     int i, j;
     printf("\n     1   2   3   4\n");
@@ -628,15 +656,15 @@ printBoard(Array2D arr1, Array2D arr2, char playerChars[], int state)
             switch (state)
             {
             case 0: // displays player Dos screen
-                if (arr1[i][j] == 0 && arr2[i][j] == 0)
+                if (Uno[i][j] == 0 && Tres[i][j] == 0)
                     printf(" - |"); // unoccupied
                 else
-                    printf(" O |"); // occupied
+                    printf(" \033[36mO\033[0m |"); // occupied
                 break;
             case 1:                  // displays player Uno and Tres screen
-                if (arr1[i][j] == 1) // occupied by Uno
+                if (Uno[i][j] == 1) // occupied by Uno
                     printf(" \033[33m%c\033[0m |", playerChars[0]);
-                else if (arr2[i][j] == 1) // occupied by Tres
+                else if (Tres[i][j] == 1) // occupied by Tres
                     printf(" \033[35m%c\033[0m |", playerChars[1]);
                 else
                     printf(" - |"); // unoccupied
@@ -677,70 +705,70 @@ playerName(int num)
 }
 
 /*
-    Purpose: randomizes the x and y coordinate move of the player Dos
+    Purpose: randomizes the row and column position move of the player Dos
     Returns: void
-    @param : *x stores the x coordinate
-    @param : *y stores the y coordinate
-    @param : arr stores the occupied and unoccupied spaces
+    @param : *row stores the row position
+    @param : *col stores the column position
+    @param : F stores the occupied and unoccupied spaces
     Pre-condition: arguments passed to function are of proper type
 */
 void
-randPlayer(Array2D arr, int *x, int *y)
+randPlayer(Matrix F, int *row, int *col)
 {
     do
     {
-        *x = rand() % 4 + 1; // generates random number from 1-4
-        *y = rand() % 4 + 1;
+        *row = rand() % 4 + 1; // generates random number from 1-4
+        *col = rand() % 4 + 1;
 
-    } while (arr[*x - 1][*y - 1]); // repeats while x and y is unnocupied
+    } while (F[*row - 1][*col - 1]); // repeats while row and column is unnocupied
 }
 
 /*
-    Purpose: This function asks the user for coordinates x and y. If the input
+    Purpose: This function asks the user for positions row and column. If the input
              is invalid, an error message will be displayed until the user
              enters a valid input.
     Returns: void
-    @param : *x stores the x coordinate
-    @param : *y stores the y coordinate
-    @param : F is the 2d array where the coordinates will be marked
+    @param : *row stores the row position
+    @param : *col stores the column position
+    @param : F is the matrix where the positions will be marked
     @param : player specifies whose turn it is
     Pre-condition: arguments passed to function are of proper type
 */
 void
-getCoordinates(int *x, int *y, Array2D F, int player)
+getPositions(int *row, int *col, Matrix F, int player)
 {
 
-    *x = 0; // initializes to zero
-    *y = 0;
+    *row = 0; // initializes to zero
+    *col = 0;
 
     do
     {
-        // checks if *x and *y are between 1 and 4
-        if (isValidInput(*x) && isValidInput(*y))
-            if ((player == 1 && F[*x - 1][*y - 1]) || (player != 1 && !F[*x - 1][*y - 1]))
-                printf("\nThis space cannot be selected. Please enter a different coordinate.");
+        // checks if *row and *col are between 1 and 4
+        if (isValidInput(*row) && isValidInput(*col))
+            if ((player == 1 && F[*row - 1][*col - 1]) || (player != 1 && !F[*row - 1][*col - 1]))
+                printf("\nThis space cannot be selected. Please enter a different position.");
         // informs user that player cannot occupy/unoccupy that space
 
         printf("\nEnter row: ");
-        scanf("%d", x);
+        scanf("%d", row);
         while (getchar() != '\n'); // clears buffer
-        while (!isValidInput(*x))
+        while (!isValidInput(*row))
         {
             printf("Invalid input. Enter row: ");
-            scanf("%d", x);
+            scanf("%d", row);
             while (getchar() != '\n');
         }
 
         printf("Enter column: ");
-        scanf("%d", y);
+        scanf("%d", col);
         while (getchar() != '\n');
-        while (!isValidInput(*y))
+        while (!isValidInput(*col))
         {
             printf("Invalid input. Enter column: ");
-            scanf("%d", y);
+            scanf("%d", col);
             while (getchar() != '\n');
         }
-    } while ((player == 1 && F[*x - 1][*y - 1]) || (player != 1 && !F[*x - 1][*y - 1]));
+    } while ((player == 1 && F[*row - 1][*col - 1]) || (player != 1 && !F[*row - 1][*col - 1]));
     // repeats while no valid input has been made
 }
 
@@ -762,20 +790,17 @@ getCoordinates(int *x, int *y, Array2D F, int player)
              character or 'O'.
 
     Returns: 1 once the game is over
-    @param : Uno stores the board of occupied/unoccupied spaces of player Uno
-    @param : Dos stores the board of occupied/unoccupied spaces of player Dos
-    @param : Tres stores the board of occupied/unoccupied spaces of player Tres
-    @param : F is the 2d array where the coordinates will be marked
+    @param : Boards is the struct that contains all player matrices
     @param : playerChars[] stores the chosen/default characters of each player
     @param : playerMode indicates if the game mode is two or three player
     Pre-condition: number of elements of the arrays match MAX
 */
 int
-NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F, char playerChars[], int playerMode)
+NextPlayerMove(boardType * Boards, comboType Combos, char playerChars[], int playerMode)
 {
     int turn = TRUE, go = FALSE, over = FALSE; // initializes according to specs
     int totalF = 16, turnNumber = 0, player;
-    int x, y; // coordinates
+    int row, col; // positions
 
     while (!over) // repeats while no one wins
     {
@@ -785,44 +810,44 @@ NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F, char playerCha
             clrscr();
             playerName(player);
 
-            printBoard(Uno, Tres, playerChars, player != 1);
+            printBoard(Boards->Uno, Boards->Tres, playerChars, player != 1);
 
             if (player == 2)
-                printf("\n    \033[36mDos\033[0m removed \033[31m%d %d\033[0m\n", x, y);
+                printf("\n    \033[36mDos\033[0m removed \033[31m%d %d\033[0m\n", row, col);
             // prints what player Dos unoccupied
 
-            getCoordinates(&x, &y, F, player);
+            getPositions(&row, &col, Boards->F, player);
         }
         else
-            randPlayer(F, &x, &y); // two-player game mode
+            randPlayer(Boards->F, &row, &col); // two-player game mode and player Dos' turn
 
         if (turn)
         {
-            if (!go && F[x - 1][y - 1]) // player Uno's turn
+            if (!go && Boards->F[row - 1][col - 1]) // player Uno's turn
             {
-                Uno[x - 1][y - 1] = 1;
-                F[x - 1][y - 1] = 0;
+                Boards->Uno[row - 1][col - 1] = 1;
+                Boards->F[row - 1][col - 1] = 0;
                 turn = !turn;
                 go = !go;
                 totalF--;
             }
-            else if (go && F[x - 1][y - 1]) // player Tres' turn
+            else if (go && Boards->F[row - 1][col - 1]) // player Tres' turn
             {
-                Tres[x - 1][y - 1] = 1;
-                F[x - 1][y - 1] = 0;
+                Boards->Tres[row - 1][col - 1] = 1;
+                Boards->F[row - 1][col - 1] = 0;
                 go = !go;
                 totalF--;
             }
         }
-        else if (!turn && !F[x - 1][y - 1]) // player Dos' turn
+        else if (!turn && !Boards->F[row - 1][col - 1]) // player Dos' turn
         {
-            Uno[x - 1][y - 1] = 0;
-            Tres[x - 1][y - 1] = 0;
-            F[x - 1][y - 1] = 1;
+            Boards->Uno[row - 1][col - 1] = 0;
+            Boards->Tres[row - 1][col - 1] = 0;
+            Boards->F[row - 1][col - 1] = 1;
             turn = !turn;
             totalF++;
         }
-        over = checkCombo(Uno) || checkCombo(Tres) || totalF == 0; // indicates if there is winner
+        over = checkCombo(Boards->Uno, Combos) || checkCombo(Boards->Tres, Combos) || totalF == 0; // indicates if there is winner
         turnNumber++;                                              // adds to turn counter
     }
 
@@ -835,14 +860,11 @@ NextPlayerMove(Array2D Uno, Array2D Dos, Array2D Tres, Array2D F, char playerCha
     Returns: void
     @param : over is status of the game (1 if over, 0 if not)
     @param : playerChars[] stores the chosen/default characters of each player
-    @param : Uno stores the board of occupied/unoccupied spaces of player Uno
-    @param : Dos stores the board of occupied/unoccupied spaces of player Dos
-    @param : Tres stores the board of occupied/unoccupied spaces of player Tres
-    @param : F is the 2d array where the coordinates will be marked
+    @param : Boards is the struct that contains all player matrices
     Pre-condition: number of elements of the arrays match MAX
 */
 void
-GameOver(int over, char playerChars[], Array2D Uno, Array2D Dos, Array2D Tres, Array2D F)
+GameOver(int over, char playerChars[], boardType Boards, comboType Combos)
 {
     int i, j, totalF = 0;
 
@@ -850,43 +872,58 @@ GameOver(int over, char playerChars[], Array2D Uno, Array2D Dos, Array2D Tres, A
 
     for (i = 0; i < MAX; i++)
         for (j = 0; j < MAX; j++)
-            if (F[i][j] == 1)
+            if (Boards.F[i][j] == 1)
                 totalF++; // counts if all spaces are occupied
 
     if (over && totalF == 0)
-        printf("\n\033[36m\033[1m-------DOS WINS-------\033[0m\n");
-    else if (over && checkCombo(Uno))
-        printf("\n\033[33m\033[1m-------UNO WINS-------\033[0m\n");
-    else if (over && checkCombo(Tres))
-        printf("\n\033[35m\033[1m-------TRES WINS-------\033[0m\n");
+        printf("\n\033[36m\033[1m ------ DOS WINS ------\033[0m\n");
+    else if (over && checkCombo(Boards.Uno, Combos))
+        printf("\n\033[33m\033[1m ------ UNO WINS ------\033[0m\n");
+    else if (over && checkCombo(Boards.Tres, Combos))
+        printf("\n\033[35m\033[1m ------ TRES WINS ------\033[0m\n");
 
     // prints final board
-    printBoard(Uno, Tres, playerChars, 1);
+    printBoard(Boards.Uno, Boards.Tres, playerChars, 1);
 }
 
 int
 main()
 {
-    Array2D Uno, Dos, Tres, F; // boards of each player
+    boardType Boards; // boards
+    comboType Combos;
     int over, playerMode = 0, play = 1;
     char playerChars[2] = {'1', '3'}; // sets default player characters
 
+    int A[MAX] = {1, 2, 3, 4}; 
+
+    Matrix P = {0};
+
+    defineP(A, P);
+
+    Matrix C = {{11, 12, 13, 14},
+                {11, 22, 33, 44},
+                {14, 23, 32, 41},
+                {41, 42, 43, 44}}; // matrix to be checked
+    
+    int T[4] = {11, 22, 33, 44}; 
+
+    setUTF8Encoding();
     srand(time(0)); // sets time to help random generator
+    defineW(C, T, &Combos);
 
     while (play)
     {
         // initialize matrices
-
-        initializeArray(Uno, 0);
-        initializeArray(Dos, 0);
-        initializeArray(Tres, 0);
-        initializeArray(F, 1);
+        initializeMatrix(Boards.Uno, 0);
+        initializeMatrix(Boards.Dos, 0);
+        initializeMatrix(Boards.Tres, 0);
+        initializeMatrix(Boards.F, 1);
 
         startMenu(playerChars, &playerMode); // prints start menu
 
-        over = NextPlayerMove(Uno, Dos, Tres, F, playerChars, playerMode); // starts game loop
+        over = NextPlayerMove(&Boards, Combos, playerChars, playerMode); // starts game loop
 
-        GameOver(over, playerChars, Uno, Dos, Tres, F); // prints winner board and game over screen
+        GameOver(over, playerChars, Boards, Combos); // prints winner board and game over screen
 
         printf("\nStart again? (\033[32m1 for yes\033[0m, \033[31m0 for no\033[0m): ");
         // asks if user wants to play again
